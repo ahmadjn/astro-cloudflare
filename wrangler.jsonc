@@ -11,6 +11,9 @@
     "binding": "ASSETS",
     "directory": "./dist"
   },
+  "functions": {
+    "directory": "./functions"
+  },
   "observability": {
     "enabled": false
   },

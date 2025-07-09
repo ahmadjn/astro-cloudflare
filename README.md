@@ -226,6 +226,17 @@ wrangler deploy
 
 ### 1. Content Management
 - **Dynamic Content**: JSON to Markdown conversion
+
+### 2. User Detection System
+- **Cloudflare Function**: Deteksi bot dan device menggunakan CF data + uaparser.js
+- **Simplified Data**: Hanya mengembalikan nilai boolean (true/false)
+- **Data Injection**: Inject detection data ke halaman statis
+- **Client-side Access**: Data tersedia di JavaScript
+- **Event System**: Custom events untuk bot/human/device handling
+- **No Cache**: Setiap request fresh tanpa cache
+- **No Script Modification**: Tidak modify/remove script
+
+📖 **[docs/USER_DETECTION.md](docs/USER_DETECTION.md)** - Dokumentasi lengkap user detection
 - **Categories**: Organized app categories
 - **SEO Optimized**: Meta tags dan structured data
 
