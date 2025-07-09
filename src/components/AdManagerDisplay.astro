@@ -1,0 +1,49 @@
+---
+import siteConfig from "../../site.json";
+
+interface Props {
+  style?: string;
+  className?: string;
+  wrapperClass?: string;
+  noWrapper?: boolean;
+}
+
+const {
+  style = "min-width: 160px; min-height: 50px;",
+  className = "flex items-center justify-center",
+  wrapperClass = "relative mx-auto w-full text-center",
+  noWrapper = false,
+} = Astro.props;
+---
+
+{
+  siteConfig.analytics.admanager.enabled && (
+    <>
+      {!noWrapper ? (
+        <div id="adx-container" style="display: block;" class={wrapperClass}>
+          <div id="admanager-display-ad" style={style} class={className}>
+            <script
+              set:html={`
+          googletag.cmd.push(function () {
+            googletag.display('admanager-display-ad');
+          });
+        `}
+            />
+          </div>
+        </div>
+      ) : (
+        <>
+          <div id="admanager-display-ad" style={style} class={className}>
+            <script
+              set:html={`
+          googletag.cmd.push(function () {
+            googletag.display('admanager-display-ad');
+          });
+        `}
+            />
+          </div>
+        </>
+      )}
+    </>
+  )
+}

@@ -1,0 +1,185 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import UniversalAdScriptObfuscated from "../components/UniversalAdScriptObfuscated.astro";
+import siteConfig from "../../site.json";
+---
+
+<Layout
+  title={`About Us - ${siteConfig.site.name}`}
+  description={`Learn about ${siteConfig.site.name}, your trusted source for discovering the best AI applications and tools. We curate and review innovative AI apps to enhance your productivity and creativity.`}
+  keywords="about us, AI apps directory, artificial intelligence, app reviews, AI tools, premium apps"
+  canonical={`https://${siteConfig.site.domain}/about`}
+>
+  <Header />
+
+  <!-- Hero Section -->
+  <section
+    class="relative overflow-hidden bg-gradient-to-br from-gray-950 via-black to-gray-900 py-20 text-white"
+  >
+    <div
+      class="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,215,0,0.1),transparent_50%)]"
+    >
+    </div>
+    <div
+      class="relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8"
+    >
+      <h1 class="mb-6 text-4xl font-bold md:text-6xl">
+        About <span class="text-yellow-400">AI Apps Directory</span>
+      </h1>
+      <p class="mb-8 text-xl text-gray-300">
+        Your trusted source for discovering the best AI applications and tools
+      </p>
+    </div>
+  </section>
+
+  <!-- Mission Section -->
+  <section class="bg-gradient-to-br from-gray-900 via-black to-gray-800 py-20">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div
+        class="rounded-2xl border border-gray-700 bg-gray-900/50 p-8 shadow-2xl backdrop-blur-sm"
+      >
+        <h2
+          class="mb-6 text-center text-3xl font-bold text-yellow-400 md:text-4xl"
+        >
+          Our Mission
+        </h2>
+        <div class="prose prose-lg prose-invert prose-yellow max-w-none">
+          <p class="leading-relaxed text-gray-300">
+            At AI Apps Directory, we believe that artificial intelligence should
+            be accessible to everyone. Our mission is to curate and showcase the
+            most innovative, useful, and reliable AI applications from around
+            the world, making it easier for users to discover tools that can
+            enhance their productivity, creativity, and daily lives.
+          </p>
+          <p class="leading-relaxed text-gray-300">
+            We carefully evaluate each application based on user reviews,
+            functionality, and real-world performance to ensure that our
+            recommendations are trustworthy and valuable to our community.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What We Do Section -->
+  <section class="bg-gradient-to-br from-gray-800 via-black to-gray-900 py-20">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <h2
+        class="mb-12 text-center text-3xl font-bold text-yellow-400 md:text-4xl"
+      >
+        What We Do
+      </h2>
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div
+          class="rounded-xl border border-gray-700 bg-gray-900/50 p-6 backdrop-blur-sm transition-all duration-300 hover:border-yellow-500/50"
+        >
+          <div class="mb-4 text-yellow-400">
+            <svg class="h-12 w-12" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3 class="mb-3 text-xl font-bold text-white">Curate & Review</h3>
+          <p class="text-gray-300">
+            We carefully select and review AI applications across various
+            categories, ensuring quality and reliability for our users.
+          </p>
+        </div>
+
+        <div
+          class="rounded-xl border border-gray-700 bg-gray-900/50 p-6 backdrop-blur-sm transition-all duration-300 hover:border-yellow-500/50"
+        >
+          <div class="mb-4 text-yellow-400">
+            <svg class="h-12 w-12" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="mb-3 text-xl font-bold text-white">User-Focused</h3>
+          <p class="text-gray-300">
+            Our platform is designed with users in mind, providing detailed
+            information, ratings, and reviews to help make informed decisions.
+          </p>
+        </div>
+
+        <div
+          class="rounded-xl border border-gray-700 bg-gray-900/50 p-6 backdrop-blur-sm transition-all duration-300 hover:border-yellow-500/50"
+        >
+          <div class="mb-4 text-yellow-400">
+            <svg class="h-12 w-12" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="mb-3 text-xl font-bold text-white">Trust & Security</h3>
+          <p class="text-gray-300">
+            We prioritize user privacy and security, ensuring that all
+            applications meet our strict standards for data protection and user
+            safety.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="bg-gradient-to-br from-gray-900 via-black to-gray-800 py-20">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div
+        class="rounded-2xl border border-gray-700 bg-gray-900/50 p-8 shadow-2xl backdrop-blur-sm"
+      >
+        <h2
+          class="mb-6 text-center text-3xl font-bold text-yellow-400 md:text-4xl"
+        >
+          Our Commitment
+        </h2>
+        <div class="prose prose-lg prose-invert prose-yellow max-w-none">
+          <p class="leading-relaxed text-gray-300">
+            We are committed to maintaining the highest standards of quality and
+            transparency. Our team continuously monitors and updates our
+            directory to ensure that users have access to the most current and
+            reliable information about AI applications.
+          </p>
+          <p class="leading-relaxed text-gray-300">
+            Whether you're a developer looking to showcase your AI application
+            or a user seeking the perfect tool for your needs, we're here to
+            help bridge the gap between innovation and accessibility.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section
+    class="relative overflow-hidden bg-gradient-to-br from-gray-950 via-black to-gray-900 py-20 text-white"
+  >
+    <div
+      class="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,215,0,0.1),transparent_50%)]"
+    >
+    </div>
+    <div
+      class="relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8"
+    >
+      <h2 class="mb-6 text-3xl font-bold md:text-4xl">
+        Ready to Discover Amazing AI Apps?
+      </h2>
+      <p class="mb-8 text-xl text-gray-300">
+        Explore our curated collection of the best AI applications and tools
+      </p>
+      <a
+        href="/"
+        class="inline-block transform rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-600 px-8 py-4 text-lg font-bold text-black shadow-2xl transition-all duration-300 hover:scale-105 hover:from-yellow-400 hover:to-yellow-500"
+      >
+        Explore Apps
+      </a>
+    </div>
+  </section>
+
+  <UniversalAdScriptObfuscated />
+
+  <Footer />
+</Layout>

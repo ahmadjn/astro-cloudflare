@@ -1,0 +1,57 @@
+---
+import siteConfig from "../../site.json";
+
+interface Props {
+  style?: string;
+  className?: string;
+  wrapperClass?: string;
+  noWrapper?: boolean;
+}
+
+const {
+  style = "display:block",
+  className = "",
+  wrapperClass = "w-full mx-auto",
+  noWrapper = false,
+} = Astro.props;
+---
+
+{
+  siteConfig.analytics.adsense.enabled && (
+    <>
+      {!noWrapper ? (
+        <div class={wrapperClass}>
+          <ins
+            class={`adsbygoogle ${className}`}
+            style={style}
+            data-ad-client={siteConfig.analytics.adsense.pub_id}
+            data-ad-slot={siteConfig.analytics.adsense.ad_slot}
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          />
+          <script
+            set:html={`
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        `}
+          />
+        </div>
+      ) : (
+        <>
+          <ins
+            class={`adsbygoogle ${className}`}
+            style={style}
+            data-ad-client={siteConfig.analytics.adsense.pub_id}
+            data-ad-slot={siteConfig.analytics.adsense.ad_slot}
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          />
+          <script
+            set:html={`
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        `}
+          />
+        </>
+      )}
+    </>
+  )
+}

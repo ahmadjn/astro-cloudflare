@@ -1,0 +1,46 @@
+{
+  "site": {
+    "name": "Premium AI Apps",
+    "title": "Discover the Best AI Apps",
+    "description": "Find the best AI applications for your needs",
+    "domain": "test.duniapondok.com",
+    "author": "Premium AI Apps",
+    "keywords": "AI apps, artificial intelligence, mobile apps",
+    "og_image": "/og-image.jpg",
+    "favicon": "/favicon.svg"
+  },
+  "deploy": {
+    "platform": "cloudflare",
+    "region": "auto"
+  },
+  "analytics": {
+    "gtag": {
+      "enabled": true,
+      "code": "AW-16782907995"
+    },
+    "adsense": {
+      "enabled": false,
+      "pub_id": "ca-pub-8207027782165641",
+      "ad_slot": "9261409743"
+    },
+    "admanager": {
+      "enabled": true,
+      "config": {
+        "pub_id": "ca-pub-9403859058511086",
+        "ad_display_path": "/23279441258/ca-pub-9403859058511086-tag",
+        "ad_interstitial_path": "/23279441258/interstitial"
+      }
+    }
+  },
+  "build": {
+    "output": "static",
+    "adapter": "@astrojs/cloudflare"
+  },
+  "landing": {
+    "static_slugs": [
+      "premium-ai-apps",
+      "best-ai-apps",
+      "start-ai-apps"
+    ]
+  }
+}

@@ -1,0 +1,463 @@
+---
+// Landing Script Component
+// Handles complex ad loading and presentation logic
+---
+
+<script>
+  (function () {
+    "use strict";
+
+    // ===================================================================================
+    // MODULE: CONFIGURATION
+    // ===================================================================================
+    const config = {
+      LOADING_DURATION: 8000,
+      LOADING_INTERVAL: 200,
+      ADX_SLOT_ID: "admanager-display-ad",
+      RETRY_TIMEOUTS: [5000, 3000, 3000],
+      BACK_URL_1: "/landing/premium-ai-apps?gad_source=5",
+      AD_FINALIZE_DELAY: 500, // Delay before finalizing ad position
+    };
+
+    const state = {
+      progress: 0,
+      progressInterval: null,
+      statusIndex: 0,
+      speedIndex: 0,
+      decisionMade: false,
+      winningAdElement: null,
+      adxAttemptCount: 0,
+      adxRetryTimer: null,
+      adSlotObject: null,
+      loadingComplete: false,
+    };
+
+    const elements = {
+      body: null,
+      progressSection: null,
+      successSection: null,
+      progressBar: null,
+      progressText: null,
+      progressPercent: null,
+      statusText: null,
+      downloadSpeed: null,
+      timeRemaining: null,
+      startButton: null,
+      adxContainer: null,
+    };
+
+    // Progress statuses for the loading screen
+    const statuses = [
+      "Initializing package...",
+      "Connecting to server...",
+      "Verifying package integrity...",
+      "Starting package...",
+      "Downloading package files...",
+      "Processing AI applications...",
+      "Optimizing package...",
+      "Download Ready!",
+    ];
+
+    const speeds = [
+      "2.1 MB/s",
+      "3.4 MB/s",
+      "2.8 MB/s",
+      "4.2 MB/s",
+      "3.1 MB/s",
+      "2.9 MB/s",
+      "3.7 MB/s",
+      "4.5 MB/s",
+    ];
+
+    // ===================================================================================
+    // MODULE: Ad Management
+    // ===================================================================================
+    const adManager = {
+      init() {
+        if (typeof googletag === "undefined" || !googletag.cmd) {
+          console.error("Google Publisher Tag (GPT.js) not loaded.");
+          return;
+        }
+
+        googletag.cmd.push(() => {
+          const allSlots = googletag.pubads().getSlots();
+          state.adSlotObject = allSlots.find(
+            (slot) => slot.getSlotElementId() === config.ADX_SLOT_ID
+          );
+
+          if (!state.adSlotObject) {
+            console.error(`Ad slot with ID '${config.ADX_SLOT_ID}' not found.`);
+            return;
+          }
+
+          googletag
+            .pubads()
+            .addEventListener(
+              "slotRenderEnded",
+              this.handleSlotRender.bind(this)
+            );
+          this.startAttemptTimeout();
+        });
+      },
+
+      handleSlotRender(event) {
+        if (
+          state.decisionMade ||
+          event.slot.getSlotElementId() !== config.ADX_SLOT_ID
+        )
+          return;
+
+        clearTimeout(state.adxRetryTimer);
+        state.adxAttemptCount++;
+
+        if (!event.isEmpty) {
+          console.log(
+            `%c[ADS] AdX FILLED on attempt #${state.adxAttemptCount}.`,
+            "color: #90ee90;"
+          );
+          state.winningAdElement = elements.adxContainer;
+          state.decisionMade = true;
+          state.winningAdElement.style.opacity = ".0";
+
+          // Handle different scenarios based on loading state
+          if (state.progress < 100) {
+            // Loading still in progress - force complete
+            loadingScreen.forceComplete(false);
+          } else if (
+            state.loadingComplete &&
+            elements.successSection &&
+            !elements.successSection.classList.contains("hidden")
+          ) {
+            // Loading already complete and success section visible - position ad now
+            console.log("[ADS] Late ad load detected. Positioning ad...");
+            setTimeout(() => {
+              adManager.finalizeAdPosition();
+            }, config.AD_FINALIZE_DELAY);
+          }
+        } else {
+          console.log(
+            `%c[ADS] AdX UNFILLED on attempt #${state.adxAttemptCount}.`,
+            "color: #ffb6c1;"
+          );
+          this.tryNextAttempt();
+        }
+      },
+
+      tryNextAttempt() {
+        if (state.adxAttemptCount >= config.RETRY_TIMEOUTS.length) {
+          console.error("All ad retry attempts failed.");
+          if (elements.adxContainer)
+            elements.adxContainer.style.display = "none";
+          state.decisionMade = true;
+
+          // Notify loading complete with failure flag
+          if (state.progress < 100) {
+            loadingScreen.forceComplete(true);
+          }
+          return;
+        }
+
+        this.startAttemptTimeout();
+        googletag.pubads().refresh([state.adSlotObject]);
+      },
+
+      startAttemptTimeout() {
+        const currentAttemptIndex = state.adxAttemptCount;
+        const timeoutDuration = config.RETRY_TIMEOUTS[currentAttemptIndex];
+
+        state.adxRetryTimer = setTimeout(() => {
+          console.warn(`Ad attempt #${currentAttemptIndex + 1} TIMED OUT.`);
+          state.adxAttemptCount++;
+          this.tryNextAttempt();
+        }, timeoutDuration);
+      },
+
+      finalizeAdPosition() {
+        if (!state.winningAdElement || !elements.startButton) {
+          console.error("Cannot finalize ad position: missing elements");
+          return;
+        }
+
+        console.log("[ADS] Finalizing ad position relative to start button.");
+
+        // Ensure start button is visible and get its position
+        const startButtonRect = elements.startButton.getBoundingClientRect();
+        const adRect = state.winningAdElement.getBoundingClientRect();
+
+        // Calculate position above the start button
+        const newStartHeight = startButtonRect.height / 2;
+        const newTargetHeight = adRect.height / 2.2;
+        const finalY = startButtonRect.top + newStartHeight - newTargetHeight;
+
+        // Apply final positioning
+        state.winningAdElement.style.position = "fixed";
+        // state.winningAdElement.style.left = "50%";
+        // state.winningAdElement.style.transform = "translateX(-50%)";
+        state.winningAdElement.style.top = `${finalY}px`;
+        // state.winningAdElement.style.top = "30%";
+        state.winningAdElement.style.opacity = ".0";
+        state.winningAdElement.style.zIndex = "99999";
+        // state.winningAdElement.style.transition = "opacity 0.5s ease-out";
+
+        console.log("[ADS] Ad positioned successfully.");
+      },
+    };
+
+    // ===================================================================================
+    // MODULE: Loading Screen Management
+    // ===================================================================================
+    const loadingScreen = {
+      init() {
+        // Start the progress animation after a short delay
+        setTimeout(() => {
+          this.startProgress();
+        }, 1000);
+      },
+
+      startProgress() {
+        const increment =
+          100 / (config.LOADING_DURATION / config.LOADING_INTERVAL);
+
+        state.progressInterval = setInterval(() => {
+          state.progress += Math.random() * 8 + 2; // Random increment between 2-10
+
+          if (state.progress >= 100) {
+            state.progress = 100;
+            this.completeLoading();
+          } else {
+            this.updateProgress();
+          }
+        }, config.LOADING_INTERVAL);
+      },
+
+      updateProgress() {
+        // Update progress bar
+        if (elements.progressBar) {
+          elements.progressBar.style.width = state.progress + "%";
+        }
+
+        if (elements.progressPercent) {
+          elements.progressPercent.textContent =
+            Math.round(state.progress) + "%";
+        }
+
+        // Update status text based on progress
+        if (state.progress > state.statusIndex * 12) {
+          if (elements.statusText && state.statusIndex < statuses.length) {
+            elements.statusText.textContent = statuses[state.statusIndex];
+          }
+          state.statusIndex = Math.min(
+            state.statusIndex + 1,
+            statuses.length - 1
+          );
+        }
+
+        // Update download speed periodically
+        if (state.progress % 15 < 2) {
+          if (elements.downloadSpeed) {
+            elements.downloadSpeed.textContent =
+              speeds[state.speedIndex % speeds.length];
+          }
+          state.speedIndex++;
+        }
+
+        // Update time remaining
+        const remaining = Math.max(0, Math.round((100 - state.progress) / 3));
+        if (elements.timeRemaining) {
+          elements.timeRemaining.textContent =
+            remaining > 0 ? `${remaining}s` : "Almost done...";
+        }
+
+        // Update progress text based on progress percentage
+        if (elements.progressText) {
+          if (state.progress < 20) {
+            elements.progressText.textContent = "Preparing download...";
+          } else if (state.progress < 40) {
+            elements.progressText.textContent = "Downloading package...";
+          } else if (state.progress < 60) {
+            elements.progressText.textContent = "Processing files...";
+          } else if (state.progress < 80) {
+            elements.progressText.textContent = "Optimizing package...";
+          } else if (state.progress < 100) {
+            elements.progressText.textContent = "Finalizing download...";
+          }
+        }
+      },
+
+      completeLoading() {
+        clearInterval(state.progressInterval);
+        state.loadingComplete = true;
+
+        if (elements.progressText) {
+          elements.progressText.textContent = "Download complete!";
+        }
+
+        // Show success section after a short delay
+        setTimeout(() => {
+          this.showSuccessSection();
+        }, 1000);
+      },
+
+      forceComplete(isFailure) {
+        // Prevent multiple forced completions
+        if (state.loadingComplete) {
+          console.log("[Loading] Already completed, ignoring force complete.");
+          return;
+        }
+
+        // Force progress to 100% and complete loading
+        state.progress = 100;
+        this.updateProgress();
+        this.completeLoading();
+      },
+
+      showSuccessSection() {
+        if (elements.progressSection) {
+          elements.progressSection.classList.add("hidden");
+        }
+
+        if (elements.successSection) {
+          elements.successSection.classList.remove("hidden");
+
+          // If we have a winning ad, position it after ensuring start button is visible
+          if (state.winningAdElement && elements.startButton) {
+            // Wait a bit to ensure the success section is fully rendered
+            setTimeout(() => {
+              adManager.finalizeAdPosition();
+            }, config.AD_FINALIZE_DELAY);
+          }
+        }
+
+        // Re-enable scrolling
+        if (elements.body) {
+          elements.body.style.overflow = "auto";
+        }
+      },
+    };
+
+    // ===================================================================================
+    // MODULE: Navigation Manager
+    // ===================================================================================
+    const navigationManager = {
+      isRedirecting: false,
+
+      init() {
+        try {
+          history.pushState({ trap: "on" }, "", window.location.href);
+          window.addEventListener("popstate", this.handlePopState.bind(this));
+        } catch (e) {
+          console.error("Failed to init back-button trap", e);
+        }
+      },
+
+      handlePopState(e) {
+        if (this.isRedirecting) return;
+
+        // Always try to redirect on popstate
+        this.isRedirecting = true;
+        history.pushState({ trap: "on" }, "", window.location.href);
+        window.location.replace(config.BACK_URL_1);
+      },
+    };
+
+    // ===================================================================================
+    // MODULE: Download Button Handler
+    // ===================================================================================
+    const downloadHandler = {
+      init() {
+        if (!elements.startButton) return;
+
+        elements.startButton.addEventListener(
+          "click",
+          this.handleDownload.bind(this)
+        );
+      },
+
+      handleDownload() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const downloadParam = urlParams.get("download");
+
+        if (downloadParam) {
+          // Redirect to the download page with the parameter
+          window.location.href = `/download/${downloadParam}?gad_source=1`;
+        } else {
+          // Fallback behavior
+          const link = document.createElement("a");
+          link.href = "#";
+          link.download = "premium-package.zip";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+
+        // Update button to show success
+        elements.startButton.innerHTML =
+          '<svg class="mr-3 h-6 w-6 md:h-8 md:w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+          '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>' +
+          "</svg><span>DOWNLOADED SUCCESSFULLY!</span>";
+
+        // Update button styling
+        elements.startButton.classList.remove(
+          "hover:scale-105",
+          "hover:from-yellow-400",
+          "hover:to-yellow-500"
+        );
+        elements.startButton.classList.add(
+          "bg-gradient-to-r",
+          "from-green-500",
+          "to-green-600",
+          "border-green-400"
+        );
+      },
+    };
+
+    // ===================================================================================
+    // INITIALIZATION
+    // ===================================================================================
+    function init() {
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get all necessary elements
+        elements.body = document.body;
+        elements.progressSection = document.getElementById("progressSection");
+        elements.successSection = document.getElementById("successSection");
+        elements.progressBar = document.getElementById("progressBar");
+        elements.progressText = document.getElementById("progressText");
+        elements.progressPercent = document.getElementById("progressPercent");
+        elements.statusText = document.getElementById("statusText");
+        elements.downloadSpeed = document.getElementById("downloadSpeed");
+        elements.timeRemaining = document.getElementById("timeRemaining");
+        elements.startButton = document.getElementById("startButton");
+        elements.adxContainer = document.getElementById("adx-container");
+
+        // Check for ad parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasAdParams =
+          urlParams.has("gclid") || urlParams.has("gad_source");
+
+        if (!hasAdParams) {
+          console.log(
+            "No ad parameters found. Loading will proceed without ads."
+          );
+        }
+
+        // Lock scrolling during loading
+        window.scrollTo(0, 0);
+        elements.body.style.overflow = "hidden";
+
+        // Initialize all modules
+        navigationManager.init();
+        loadingScreen.init(); // Always initialize loading screen
+
+        // Only initialize ad manager if we have ad parameters
+        if (hasAdParams) {
+          adManager.init();
+        }
+
+        downloadHandler.init();
+      });
+    }
+
+    // Start the application
+    init();
+  })();
+</script>

@@ -1,0 +1,303 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import AppCard from "../../components/AppCard.astro";
+import CategoryIcons from "../../components/CategoryIcons.astro";
+import UniversalAdScriptObfuscated from "../../components/UniversalAdScriptObfuscated.astro";
+import { getCollection } from "astro:content";
+import siteConfig from "../../../site.json";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+
+  // Create paths for each category
+  const categories = [
+    { slug: "art-design", name: "Art & Design" },
+    { slug: "entertainment", name: "Entertainment" },
+    { slug: "music-audio", name: "Music & Audio" },
+    { slug: "photography", name: "Photography" },
+    { slug: "productivity", name: "Productivity" },
+    { slug: "video-players-editors", name: "Video Players & Editors" },
+  ];
+
+  return categories.map((category) => ({
+    params: { slug: category.slug },
+    props: {
+      categoryName: category.name,
+      categorySlug: category.slug,
+      apps: posts.filter((post) => post.data.category === category.name),
+    },
+  }));
+}
+
+const { categoryName, categorySlug, apps } = Astro.props;
+---
+
+<Layout
+  title={`${categoryName} AI Apps - ${siteConfig.site.name}`}
+  description={`Discover cutting-edge AI applications in the ${categoryName.toLowerCase()} category. Find the perfect tools to enhance your creativity and productivity.`}
+  keywords={`${categoryName}, AI apps, artificial intelligence, ${categoryName.toLowerCase()}, mobile apps, productivity tools`}
+  canonical={`https://${siteConfig.site.domain}/category/${categorySlug}`}
+>
+  <Header />
+
+  <!-- Category Hero -->
+  <section
+    class="relative overflow-hidden bg-gradient-to-br from-gray-950 via-black to-gray-900 py-20 text-white"
+  >
+    <div
+      class="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,215,0,0.1),transparent_50%)]"
+    >
+    </div>
+    <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h1 class="mb-6 text-4xl font-bold md:text-6xl">
+          {categoryName}
+          <span class="block text-yellow-400"> AI Apps </span>
+        </h1>
+        <p class="mx-auto mb-8 max-w-3xl text-xl text-gray-300 md:text-2xl">
+          Discover cutting-edge AI applications in the {
+            categoryName.toLowerCase()
+          } category. Find the perfect tools to enhance your creativity and productivity.
+        </p>
+        <div class="flex items-center justify-center space-x-4 text-gray-300">
+          <div
+            class="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-400"
+          >
+            <CategoryIcons category={categorySlug} class="h-6 w-6 text-black" />
+          </div>
+          <span class="text-lg">{apps.length} AI Applications</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Apps Grid -->
+  <section class="bg-gradient-to-br from-gray-900 via-black to-gray-800 py-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {
+        apps.length > 0 ? (
+          <>
+            <div class="mb-12 text-center">
+              <h2 class="mb-4 text-3xl font-bold text-white md:text-4xl">
+                Featured {categoryName} Apps
+              </h2>
+              <p class="mx-auto max-w-2xl text-xl text-gray-300">
+                Handpicked AI applications that excel in{" "}
+                {categoryName.toLowerCase()} category
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {apps.map((app) => (
+                <AppCard
+                  title={app.data.title}
+                  summary={app.data.summary}
+                  rating={app.data.rating}
+                  installs={app.data.installs}
+                  developer={app.data.developer}
+                  icon={app.data.images[0] || "/placeholder-icon.png"}
+                  id={app.id.replace(".md", "")}
+                  category={app.data.category}
+                />
+              ))}
+            </div>
+          </>
+        ) : (
+          <div class="py-16 text-center">
+            <div class="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-800">
+              <svg
+                class="h-12 w-12 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.47-.881-6.08-2.33"
+                />
+              </svg>
+            </div>
+            <h3 class="mb-4 text-2xl font-bold text-white">No Apps Found</h3>
+            <p class="mb-8 text-gray-300">
+              We're currently working on adding more{" "}
+              {categoryName.toLowerCase()} AI applications.
+            </p>
+            <a
+              href="/"
+              class="inline-block rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 px-8 py-4 text-lg font-semibold text-black transition-all duration-200 hover:from-yellow-400 hover:to-yellow-500"
+            >
+              Browse Other Categories
+            </a>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Category Features -->
+  <section class="bg-gradient-to-br from-gray-800 via-black to-gray-900 py-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mb-12 text-center">
+        <h2 class="mb-4 text-3xl font-bold text-white md:text-4xl">
+          Why Choose {categoryName} AI Apps?
+        </h2>
+        <p class="mx-auto max-w-2xl text-xl text-gray-300">
+          Discover the benefits of using AI-powered applications in {
+            categoryName.toLowerCase()
+          }
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div class="text-center">
+          <div
+            class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600"
+          >
+            <svg
+              class="h-8 w-8 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+          <h3 class="mb-2 text-xl font-bold text-white">
+            Enhanced Performance
+          </h3>
+          <p class="text-gray-300">
+            AI-powered tools that significantly improve your workflow and
+            productivity
+          </p>
+        </div>
+
+        <div class="text-center">
+          <div
+            class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600"
+          >
+            <svg
+              class="h-8 w-8 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="mb-2 text-xl font-bold text-white">Smart Features</h3>
+          <p class="text-gray-300">
+            Intelligent automation and smart features that adapt to your needs
+          </p>
+        </div>
+
+        <div class="text-center">
+          <div
+            class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600"
+          >
+            <svg
+              class="h-8 w-8 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="mb-2 text-xl font-bold text-white">User-Friendly</h3>
+          <p class="text-gray-300">
+            Intuitive interfaces designed for both beginners and professionals
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section
+    class="relative overflow-hidden bg-gradient-to-br from-gray-950 via-black to-gray-900 py-20 text-white"
+  >
+    <div
+      class="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,215,0,0.1),transparent_50%)]"
+    >
+    </div>
+    <div
+      class="relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8"
+    >
+      <h2 class="mb-6 text-3xl font-bold md:text-4xl">
+        Ready to Explore {categoryName} AI Apps?
+      </h2>
+      <p class="mb-8 text-xl text-gray-300">
+        Start discovering amazing AI applications that will transform your {
+          categoryName.toLowerCase()
+        } experience
+      </p>
+      <div class="flex flex-col justify-center gap-4 sm:flex-row">
+        <a
+          href="/"
+          class="rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 px-8 py-4 text-lg font-semibold text-black transition-all duration-300 hover:from-yellow-400 hover:to-yellow-500"
+        >
+          Browse All Categories
+        </a>
+        <a
+          href="/landing"
+          class="rounded-lg border-2 border-yellow-500 px-8 py-4 text-lg font-semibold text-yellow-400 transition-all duration-300 hover:bg-yellow-500 hover:text-black"
+        >
+          View Landing Page
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <UniversalAdScriptObfuscated />
+
+  <Footer />
+</Layout>
+
+<script>
+  // Smooth scrolling for anchor links
+  document.addEventListener("DOMContentLoaded", function () {
+    const links = document.querySelectorAll('a[href^="#"]');
+
+    links.forEach((link) => {
+      link.addEventListener("click", (e: Event) => {
+        e.preventDefault();
+
+        const targetId = (e.target as HTMLAnchorElement)
+          .getAttribute("href")
+          ?.substring(1);
+        if (!targetId) return;
+
+        const targetElement = document.getElementById(targetId);
+
+        if (targetElement) {
+          const headerHeight =
+            document.querySelector("header")?.offsetHeight || 0;
+          const targetPosition = targetElement.offsetTop - headerHeight - 20;
+
+          window.scrollTo({
+            top: targetPosition,
+            behavior: "smooth",
+          });
+        }
+      });
+    });
+  });
+</script>

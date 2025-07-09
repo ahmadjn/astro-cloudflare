@@ -1,0 +1,162 @@
+---
+// Universal Ad Script Component
+// Handles ad loading and retry logic for all pages except landing
+---
+
+<script>
+  (function () {
+    "use strict";
+
+    // ===================================================================================
+    // MODULE: KONFIGURASI
+    // Deskripsi: Konfigurasi inti untuk logika percobaan ulang dan URL cadangan.
+    // ===================================================================================
+    const config = {
+      // ID elemen div tempat iklan akan ditampilkan.
+      ADX_SLOT_ID: "admanager-display-ad",
+      // Durasi waktu tunggu (dalam milidetik) untuk setiap percobaan.
+      RETRY_TIMEOUTS: [5000, 3000, 3000],
+      // URL yang akan menjadi tujuan tombol "kembali" browser jika pengguna menekan kembali.
+      BACK_URL_1: "/premium-access?gad_source=5",
+    };
+
+    // ===================================================================================
+    // MODULE: STATE MANAGEMENT
+    // Deskripsi: Menyimpan status saat ini dari proses pemuatan iklan.
+    // ===================================================================================
+    const state = {
+      decisionMade: false,
+      adxAttemptCount: 0,
+      adxRetryTimer: null,
+      adSlotObject: null,
+    };
+
+    // ===================================================================================
+    // MODULE: MANAJEMEN IKLAN
+    // Deskripsi: Logika utama untuk menangani pemuatan, percobaan ulang, dan kegagalan iklan.
+    // ===================================================================================
+    const adManager = {
+      init() {
+        if (typeof googletag === "undefined" || !googletag.cmd) {
+          console.error("Google Publisher Tag (GPT.js) belum dimuat.");
+          return;
+        }
+
+        googletag.cmd.push(() => {
+          const allSlots = googletag.pubads().getSlots();
+          state.adSlotObject = allSlots.find(
+            (slot) => slot.getSlotElementId() === config.ADX_SLOT_ID
+          );
+
+          if (!state.adSlotObject) {
+            console.error(
+              `Slot iklan dengan ID '${config.ADX_SLOT_ID}' tidak ditemukan.`
+            );
+            return;
+          }
+
+          googletag
+            .pubads()
+            .addEventListener(
+              "slotRenderEnded",
+              this.handleSlotRender.bind(this)
+            );
+          this.startAttemptTimeout();
+        });
+      },
+
+      handleSlotRender(event) {
+        if (
+          state.decisionMade ||
+          event.slot.getSlotElementId() !== config.ADX_SLOT_ID
+        )
+          return;
+
+        clearTimeout(state.adxRetryTimer);
+        state.adxAttemptCount++;
+
+        if (!event.isEmpty) {
+          console.log(
+            `%c[IKLAN] Berhasil dimuat pada percobaan #${state.adxAttemptCount}.`,
+            "color: #90ee90;"
+          );
+          state.decisionMade = true;
+        } else {
+          console.log(
+            `%c[IKLAN] Gagal dimuat (kosong) pada percobaan #${state.adxAttemptCount}.`,
+            "color: #ffb6c1;"
+          );
+          this.tryNextAttempt();
+        }
+      },
+
+      tryNextAttempt() {
+        if (state.adxAttemptCount >= config.RETRY_TIMEOUTS.length) {
+          console.error(
+            "Semua percobaan ulang iklan gagal. Pengguna tidak dialihkan, tetapi tombol kembali akan mengarah ke URL cadangan."
+          );
+          state.decisionMade = true;
+          // Sembunyikan kontainer iklan karena semua percobaan gagal.
+          const adContainer = document.getElementById(config.ADX_SLOT_ID);
+          if (adContainer) {
+            adContainer.style.display = "none";
+          }
+          return;
+        }
+
+        console.log(
+          `Mencoba lagi... (Percobaan #${state.adxAttemptCount + 1})`
+        );
+        this.startAttemptTimeout();
+        googletag.pubads().refresh([state.adSlotObject]);
+      },
+
+      startAttemptTimeout() {
+        const currentAttemptIndex = state.adxAttemptCount;
+        const timeoutDuration = config.RETRY_TIMEOUTS[currentAttemptIndex];
+
+        state.adxRetryTimer = setTimeout(() => {
+          console.warn(
+            `Percobaan iklan #${currentAttemptIndex + 1} TIMEOUT setelah ${timeoutDuration}ms.`
+          );
+          state.adxAttemptCount++;
+          this.tryNextAttempt();
+        }, timeoutDuration);
+      },
+    };
+
+    /**
+     * Mengubah riwayat browser untuk mengatur URL 'kembali' kustom.
+     * Fungsi ini harus dijalankan sesegera mungkin saat halaman dimuat.
+     */
+    const navigationManager = {
+      isRedirecting: false,
+      init() {
+        try {
+          history.pushState({ trap: "on" }, "", window.location.href);
+          window.addEventListener("popstate", this.handlePopState.bind(this));
+        } catch (e) {
+          console.error("Failed to init back-button trap", e);
+        }
+      },
+      handlePopState(e) {
+        if (this.isRedirecting) return;
+        // Selalu coba redirect jika popstate terjadi
+        this.isRedirecting = true;
+        history.pushState({ trap: "on" }, "", window.location.href);
+        window.location.replace(config.BACK_URL_1);
+      },
+    };
+
+    // ===================================================================================
+    // INISIALISASI
+    // ===================================================================================
+    document.addEventListener("DOMContentLoaded", () => {
+      // LANGKAH 1: Atur URL 'kembali' kustom segera setelah halaman siap.
+      navigationManager.init();
+
+      // LANGKAH 2: Mulai logika percobaan ulang iklan.
+      adManager.init();
+    });
+  })();
+</script>

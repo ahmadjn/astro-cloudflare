@@ -1,0 +1,225 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import AdManagerDisplay from "../../components/AdManagerDisplay.astro";
+import UniversalAdScriptObfuscated from "../../components/UniversalAdScriptObfuscated.astro";
+import siteConfig from "../../../site.json";
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  return posts.map((post) => ({
+    params: { slug: post.id.replace(".md", "") },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { data } = post;
+---
+
+<Layout
+  title={`Download ${data.title} - ${siteConfig.site.name}`}
+  description={`Download ${data.title} - ${data.summary
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")}`}
+  keywords={`download ${data.title}, ${data.title}, AI app, ${data.category}, artificial intelligence, mobile app, ${data.developer}`}
+  canonical={`https://${siteConfig.site.domain}/download/${post.id.replace(".md", "")}`}
+>
+  <!-- Fullscreen Download Page -->
+  <div class="relative h-screen overflow-hidden">
+    <!-- Animated Background Screenshots -->
+    <div
+      class="absolute inset-0 bg-gradient-to-br from-gray-950 via-black to-gray-900"
+    >
+      <!-- Screenshot Animation Container -->
+      <div class="absolute inset-0 overflow-hidden">
+        <div class="animate-scroll flex h-full">
+          {
+            data.images.slice(1, 4).map((image, index) => (
+              <div class="h-full w-screen flex-shrink-0">
+                <img
+                  src={image}
+                  alt={`${data.title} screenshot ${index + 1}`}
+                  class="h-full w-full object-cover opacity-20"
+                />
+              </div>
+            ))
+          }
+          {
+            data.images.slice(1, 4).map((image, index) => (
+              <div class="h-full w-screen flex-shrink-0">
+                <img
+                  src={image}
+                  alt={`${data.title} screenshot ${index + 1}`}
+                  class="h-full w-full object-cover opacity-20"
+                />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Dark Overlay -->
+      <div class="absolute inset-0 bg-black/60"></div>
+
+      <!-- Radial Gradient Overlay -->
+      <div
+        class="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,215,0,0.1),transparent_50%)]"
+      >
+      </div>
+    </div>
+
+    <!-- Content Overlay -->
+    <div class="relative z-10 flex h-screen items-center justify-center">
+      <div
+        class="mx-auto max-w-2xl px-4 text-center text-white sm:px-6 lg:px-8"
+      >
+        <!-- App Icon -->
+        <div class="mb-8">
+          <div class="relative">
+            <img
+              src={data.images[0]}
+              alt={`${data.title} icon`}
+              class="mx-auto h-32 w-32 rounded-3xl border-4 border-yellow-500/90 shadow-2xl"
+            />
+          </div>
+        </div>
+
+        <!-- App Info -->
+        <h1 class="mb-6 text-4xl font-bold md:text-6xl">
+          {data.title}
+        </h1>
+
+        <p class="mx-auto mb-8 max-w-lg text-xl text-gray-300 md:text-2xl">
+          {data.summary}
+        </p>
+
+        <!-- App Stats -->
+        <div class="mb-8 flex items-center justify-center space-x-8">
+          <div
+            class="flex items-center space-x-2 rounded-lg border border-gray-700 bg-gray-900/50 px-4 py-2 backdrop-blur-sm"
+          >
+            <svg
+              class="h-6 w-6 text-yellow-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+              ></path>
+            </svg>
+            <span class="text-xl font-semibold text-white">{data.rating}</span>
+          </div>
+          <div
+            class="flex items-center space-x-2 rounded-lg border border-gray-700 bg-gray-900/50 px-4 py-2 backdrop-blur-sm"
+          >
+            <svg
+              class="h-6 w-6 text-yellow-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              ></path>
+            </svg>
+            <span class="text-xl font-semibold text-white">{data.installs}</span
+            >
+          </div>
+        </div>
+
+        <AdManagerDisplay />
+
+        <!-- Download Button -->
+        <div class="mb-8">
+          <a
+            href={data.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-block transform rounded-2xl border-2 border-yellow-400/50 bg-gradient-to-r from-yellow-500 to-yellow-600 px-12 py-6 text-2xl font-bold text-black shadow-2xl transition-all duration-300 hover:scale-105 hover:from-yellow-400 hover:to-yellow-500"
+          >
+            <div class="flex items-center space-x-3">
+              <svg
+                class="h-8 w-8"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+                ></path>
+              </svg>
+              <span>INSTALL NOW!</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- Developer Info -->
+        <div
+          class="mb-8 rounded-xl border border-gray-700 bg-gray-900/50 p-6 backdrop-blur-sm"
+        >
+          <p class="text-gray-300">
+            Developed by <span class="font-semibold text-yellow-400"
+              >{data.developer}</span
+            >
+          </p>
+        </div>
+
+        <!-- Back Link -->
+        <div class="mt-12">
+          <a
+            href={`/app/${post.id.replace(".md", "")}`}
+            class="flex items-center justify-center space-x-2 text-gray-300 transition-colors hover:text-yellow-400"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            <span>Back to App Details</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <UniversalAdScriptObfuscated />
+</Layout>
+
+<style>
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-scroll {
+    animation: scroll 5s linear infinite;
+    width: 200%;
+  }
+
+  /* Ensure full screen coverage */
+  .flex-shrink-0 {
+    flex-shrink: 0;
+    min-width: 100vw;
+    height: 100vh;
+  }
+</style>

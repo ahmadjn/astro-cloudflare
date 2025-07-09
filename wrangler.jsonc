@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "test-duniapondok-com",
+  "main": "./dist/_worker.js/index.js",
+  "compatibility_date": "2025-07-05",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "global_fetch_strictly_public"
+  ],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist"
+  },
+  "observability": {
+    "enabled": false
+  },
+  "routes": [
+    {
+      "pattern": "test.duniapondok.com",
+      "custom_domain": true
+    }
+  ],
+  "placement": {
+    "mode": "smart"
+  }
+}

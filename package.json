@@ -1,0 +1,36 @@
+{
+	"name": "astro-cloudflare",
+	"type": "module",
+	"version": "0.0.1",
+	"scripts": {
+		"astro": "astro",
+		"cf-typegen": "wrangler types",
+		"dev": "astro dev",
+		"build": "npm run generate-config && astro build",
+		"preview": "npm run generate-config && astro build && wrangler dev",
+		"convert": "node scripts/convert-json-to-content.js",
+		"generate-config": "node scripts/generate-config.js",
+		"generate-ads": "node scripts/generate-ads-txt.js",
+		"obfuscate": "node scripts/obfuscate.js",
+		"update": "node scripts/updater.js",
+		"update:help": "node scripts/updater.js --help",
+		"deploy": "npm run convert && npm run generate-config && npm run generate-ads && npm run obfuscate && astro build && wrangler deploy"
+	},
+	"dependencies": {
+		"@astrojs/cloudflare": "^12.6.0",
+		"@playform/compress": "^0.2.0",
+		"@tailwindcss/vite": "^4.1.11",
+		"astro": "^5.11.0",
+		"astro-compressor": "^1.0.0",
+		"sharp": "^0.34.2",
+		"tailwindcss": "^4.1.11"
+	},
+	"devDependencies": {
+		"@tailwindcss/typography": "^0.5.16",
+		"@types/node": "^24.0.10",
+		"javascript-obfuscator": "^4.1.1",
+		"simple-git": "^3.28.0",
+		"terser": "^5.43.1",
+		"wrangler": "^4.23.0"
+	}
+}

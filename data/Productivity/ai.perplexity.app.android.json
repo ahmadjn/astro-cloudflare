@@ -1,0 +1,297 @@
+{
+  "searchTerm": "ai chat",
+  "timestamp": "2025-07-05T11:47:57.756Z",
+  "app": {
+    "title": "Perplexity - Ask Anything",
+    "description": "Perplexity—Where Knowledge Begins. The answers you need—right at your finger tips.\n\nCut through the clutter and get straight to credible, up-to-date answers. This free app syncs across devices and leverages the power of the top AI models from OpenAI, Anthropic, Meta, and more. \n\nFeatures:\n\n· Perplexity Pro Search: Guided AI search for deeper exploration.\n\n· Thread Follow-Up: Keep the conversation going for a deeper understanding.\n\n· Voice: Instant, up-to-date answers whether you type or say it. \n\n· Trust Built In: Cited sources for every answer.\n\n· Discover: Learn new things from the community.\n\n· Your Library: More than search history, it's a curation of your discoveries.\n\nDownload Perplexity now and continue your journey to better knowledge and understanding.",
+    "descriptionHTML": "Perplexity—Where Knowledge Begins. The answers you need—right at your finger tips.<br><br>Cut through the clutter and get straight to credible, up-to-date answers. This free app syncs across devices and leverages the power of the top AI models from OpenAI, Anthropic, Meta, and more. <br><br>Features:<br><br>· Perplexity Pro Search: Guided AI search for deeper exploration.<br><br>· Thread Follow-Up: Keep the conversation going for a deeper understanding.<br><br>· Voice: Instant, up-to-date answers whether you type or say it. <br><br>· Trust Built In: Cited sources for every answer.<br><br>· Discover: Learn new things from the community.<br><br>· Your Library: More than search history, it&#39;s a curation of your discoveries.<br><br>Download Perplexity now and continue your journey to better knowledge and understanding.",
+    "summary": "Get trusted answers to any question",
+    "installs": "10,000,000+",
+    "minInstalls": 10000000,
+    "maxInstalls": 19712317,
+    "score": 4.711278,
+    "scoreText": "4.7",
+    "ratings": 821860,
+    "reviews": [
+      {
+        "id": "cf0b34f4-639f-4f2a-bc58-057bb0dbdd39",
+        "userName": "Grace A Jopling",
+        "userImage": "https://play-lh.googleusercontent.com/a-/ALV-UjWype8H5r1bqrf_x5kRI9TjtviwdU5fM3-DywzsMckaygEqUJGZ6A",
+        "date": "2025-02-11T02:51:32.580Z",
+        "score": 4,
+        "scoreText": "4",
+        "url": "https://play.google.com/store/apps/details?id=ai.perplexity.app.android&reviewId=cf0b34f4-639f-4f2a-bc58-057bb0dbdd39",
+        "title": null,
+        "text": "This app, and the people behind it, are excellent. But I'm deleting it, for 2 reasons: the only Pro feature I need is no ads, but that's not an option; its unusual, annoying login process: instead of e-mail/password, it's e-mail/one-time code e-mailed to you. Since I can't always access my e-mail, I can't always use the app. I've asked for a one-time 'ad-free' fee, and plan to ask for alternate methods of receiving your code, e.g., text or phone call. I'll reinstall if these changes are made.",
+        "replyDate": null,
+        "replyText": null,
+        "version": "2.39.1",
+        "thumbsUp": 3109,
+        "criterias": [
+          {
+            "criteria": "vaf_phase1_collaborative_editing",
+            "rating": 3
+          },
+          {
+            "criteria": "vaf_phase1_collaboration",
+            "rating": 3
+          },
+          {
+            "criteria": "vaf_phase1_file_sharing",
+            "rating": 3
+          }
+        ]
+      },
+      {
+        "id": "129cd46c-182c-4371-a0d6-ad565384e494",
+        "userName": "048_Deepak Dakshin R",
+        "userImage": "https://play-lh.googleusercontent.com/a-/ALV-UjVAnsMwjwqaJmq6tIeUJ46MWaXMCVUx08Py9dSjAmj7zqrjiuk",
+        "date": "2025-02-15T05:17:25.775Z",
+        "score": 5,
+        "scoreText": "5",
+        "url": "https://play.google.com/store/apps/details?id=ai.perplexity.app.android&reviewId=129cd46c-182c-4371-a0d6-ad565384e494",
+        "title": null,
+        "text": "A life saver when it comes to academic topics. Clear, concise answers are its standout features to me. Gets to the point without any fuss, and also offers further questions related to the topic! And above all, cites sources from where it got the information, which almost always happen to be reliable journals. Haven't tried it for casual conversations though. Edit: The AI assistant is fantastic. Would love to be able to trigger it with voice, and if it shows the text of what I've said on screen.",
+        "replyDate": null,
+        "replyText": null,
+        "version": "2.39.0",
+        "thumbsUp": 2230,
+        "criterias": [
+          {
+            "criteria": "vaf_phase1_collaborative_editing",
+            "rating": 3
+          },
+          {
+            "criteria": "vaf_phase1_messaging",
+            "rating": 2
+          },
+          {
+            "criteria": "vaf_phase1_collaboration",
+            "rating": 3
+          }
+        ]
+      },
+      {
+        "id": "265737c8-37b1-4184-9d35-fabc4ef46200",
+        "userName": "Jim Gordon",
+        "userImage": "https://play-lh.googleusercontent.com/a-/ALV-UjWi293L9b3ZcoxRIOPoWeO1uUaRaCwlv5ieaXOeeuNVj18SvRc",
+        "date": "2025-02-06T20:41:24.458Z",
+        "score": 5,
+        "scoreText": "5",
+        "url": "https://play.google.com/store/apps/details?id=ai.perplexity.app.android&reviewId=265737c8-37b1-4184-9d35-fabc4ef46200",
+        "title": null,
+        "text": "Perplexity is the best AI chatbot, and I've used all the major ones - Claude, Gemini, ChatGPT, and DeepSeek. Perplexity returns the most detailed and accurate responses to queries. It gives you the sources it is drawing from which is helpful if you need to cite sources or do more research. It also shows a list of similar queries that you can click on to get even more information. I've only used the free versions I mentioned above, so I can't speak for the pros and cons of the paid versions.",
+        "replyDate": null,
+        "replyText": null,
+        "version": "2.39.0",
+        "thumbsUp": 2024,
+        "criterias": []
+      },
+      {
+        "id": "e66cd711-653f-4078-9959-fd52eaccb513",
+        "userName": "Skeletor 13",
+        "userImage": "https://play-lh.googleusercontent.com/a-/ALV-UjWnFT9Lvf9vhsUR3OtNukUNLIguMFmKCaLdbIJ0NbAVsNUZ_9OQ",
+        "date": "2025-01-29T23:14:46.147Z",
+        "score": 5,
+        "scoreText": "5",
+        "url": "https://play.google.com/store/apps/details?id=ai.perplexity.app.android&reviewId=e66cd711-653f-4078-9959-fd52eaccb513",
+        "title": null,
+        "text": "It's amazing. I waited so long to tell anyone about it or review. I love how you can just literally LITERALLY talk to it. It has answered everything I've thrown at it. Detailed issues with settings on specific phone and os. Extremely obscure excel info. I can't even with how good this thing is. I don't rate much 5 stars. Dev team, wow. Keep up the great work!",
+        "replyDate": null,
+        "replyText": null,
+        "version": "2.38.1",
+        "thumbsUp": 1150,
+        "criterias": []
+      },
+      {
+        "id": "fd71ad00-5b81-4189-9bf2-ec8f0f868dc2",
+        "userName": "Tone Fonseca",
+        "userImage": "https://play-lh.googleusercontent.com/a-/ALV-UjXnWT5Vz_EH-b-iiRQfyqQivRQMbl8NoQz8OaEytrqBaEqjrKg",
+        "date": "2024-10-09T01:45:28.411Z",
+        "score": 5,
+        "scoreText": "5",
+        "url": "https://play.google.com/store/apps/details?id=ai.perplexity.app.android&reviewId=fd71ad00-5b81-4189-9bf2-ec8f0f868dc2",
+        "title": null,
+        "text": "Definitely one of the best apps I've ever used it's an app I use constantly throughout the day throughout the week. I would say that for most things that I'm looking for whether it be a quick factual answer whether it be a more in-depth conversation about something particularly if it's fact-based or information-based, I'm much more apt to go to perplexity than to search Google.",
+        "replyDate": null,
+        "replyText": null,
+        "version": "2.31.0",
+        "thumbsUp": 687,
+        "criterias": []
+      },
+      {
+        "id": "f43ef11c-8099-49fa-8fee-021a73518efe",
+        "userName": "A",
+        "userImage": "https://play-lh.googleusercontent.com/a-/ALV-UjWzpZuIxGN3eR60f3ckT37YbIri0wlGlgzhPcLfZPnhoLfr-RPy",
+        "date": "2025-05-22T16:01:12.909Z",
+        "score": 3,
+        "scoreText": "3",
+        "url": "https://play.google.com/store/apps/details?id=ai.perplexity.app.android&reviewId=f43ef11c-8099-49fa-8fee-021a73518efe",
+        "title": null,
+        "text": "I've downgraded my rating from 5 stars to 3 stars due to recent updates that have negatively impacted the application's functionality. For instance, the comparison feature between models no longer provides a side-by-side analysis; instead, it presents only two images, requiring users to independently determine the differences. This is a significant and unsatisfactory change. I will discontinue use until these issues are resolved.",
+        "replyDate": null,
+        "replyText": null,
+        "version": "2.46.0-google",
+        "thumbsUp": 657,
+        "criterias": [
+          {
+            "criteria": "vaf_phase1_file_sharing",
+            "rating": 2
+          },
+          {
+            "criteria": "vaf_phase1_collaborative_editing",
+            "rating": 2
+          },
+          {
+            "criteria": "vaf_phase1_messaging",
+            "rating": 2
+          }
+        ]
+      },
+      {
+        "id": "28f75eda-5621-47c6-a95b-4a71e1c33de0",
+        "userName": "Gracie E",
+        "userImage": "https://play-lh.googleusercontent.com/a/ACg8ocKyK4s3I_FTBvLp3vZZiSe6BZvS-ml9dr-mqMTZZwTxJkJi1A=mo",
+        "date": "2025-03-11T20:05:39.110Z",
+        "score": 5,
+        "scoreText": "5",
+        "url": "https://play.google.com/store/apps/details?id=ai.perplexity.app.android&reviewId=28f75eda-5621-47c6-a95b-4a71e1c33de0",
+        "title": null,
+        "text": "Excellent. Love the 3 tiers of answers, and the ability to ask follow-up questions. Plus, the app itself is very user-friendly. If I want to see more resources from a particular perspective, it will give me more articles and other resources within seconds. It was able to give me sooo much information on such specific topics (like the doctrinal views of specific early Church Fathers, for example), I'm super impressed!",
+        "replyDate": null,
+        "replyText": null,
+        "version": "2.40.3",
+        "thumbsUp": 569,
+        "criterias": [
+          {
+            "criteria": "vaf_phase1_messaging",
+            "rating": 2
+          }
+        ]
+      },
+      {
+        "id": "f682d809-0473-49a5-9605-9602a74078ae",
+        "userName": "Wendy Schwartz",
+        "userImage": "https://play-lh.googleusercontent.com/a-/ALV-UjXAK-MrFMQQzB3Q9ohzbwuUkixZqCDFzXdMCq8CwgJiKDNFByThtA",
+        "date": "2025-05-09T17:18:14.816Z",
+        "score": 5,
+        "scoreText": "5",
+        "url": "https://play.google.com/store/apps/details?id=ai.perplexity.app.android&reviewId=f682d809-0473-49a5-9605-9602a74078ae",
+        "title": null,
+        "text": "Just stop using other AI. This is it. I pride myself on being a walking \"citation\" that fact checks everything. When I saw this aggregate 78 quality sources of news, then *actually* give you a perfect summary with no errors... I was worried I'm going to need a new skillset! I'm really hard on AI and can't stand how poorly most aggregate info, find sources, or even the functionality itself... Flawless app. Flawless AI. Thank you. And your browser extensions are excellent, too. *Free version",
+        "replyDate": null,
+        "replyText": null,
+        "version": "2.44.1",
+        "thumbsUp": 406,
+        "criterias": []
+      },
+      {
+        "id": "28c616e1-eb63-4e88-ad56-19059ea86ea8",
+        "userName": "JR Seamons",
+        "userImage": "https://play-lh.googleusercontent.com/a/ACg8ocIc9z3QxWpVznXlEara-BMAHeiF8vOBvfOtChdbUzd_iVyoeuwB=mo",
+        "date": "2025-04-23T01:39:34.489Z",
+        "score": 5,
+        "scoreText": "5",
+        "url": "https://play.google.com/store/apps/details?id=ai.perplexity.app.android&reviewId=28c616e1-eb63-4e88-ad56-19059ea86ea8",
+        "title": null,
+        "text": "It's amazing, and I love watching it do the legwork that I remember taking hours. Then, it provides a lovely set of structured notes on what it did, what you can do, as well as provides all resources and websites that it pulled data from. Then it sets up a nice table on summary at the end with final notes and suggested next questions.. Its almost like they are making hard...like really hard for people to wanna be dumb or generate excuses.",
+        "replyDate": null,
+        "replyText": null,
+        "version": "2.43.1",
+        "thumbsUp": 374,
+        "criterias": []
+      },
+      {
+        "id": "d5ed093f-030a-4a95-bf32-0dcacae5c38a",
+        "userName": "Dennis Wando",
+        "userImage": "https://play-lh.googleusercontent.com/a-/ALV-UjX8ucrZ3FlxFCkFj2HudDd0VliMnXR9LFQBr0YXd5ex4F7UHWX7Cw",
+        "date": "2025-04-25T18:46:00.816Z",
+        "score": 5,
+        "scoreText": "5",
+        "url": "https://play.google.com/store/apps/details?id=ai.perplexity.app.android&reviewId=d5ed093f-030a-4a95-bf32-0dcacae5c38a",
+        "title": null,
+        "text": "Wow! Once you go the Perplexity way, you can't go back. Imagine having \"exact\" answers provided for you rather than just links to approximate websites... Imagine a search engine/AI with the ability to extract the actual information you need from all the fluff and collate it into an answer you can use... including references for each answer... behold = Perplexity",
+        "replyDate": null,
+        "replyText": null,
+        "version": "2.43.1",
+        "thumbsUp": 274,
+        "criterias": [
+          {
+            "criteria": "vaf_phase1_file_sharing",
+            "rating": 3
+          },
+          {
+            "criteria": "vaf_phase1_messaging",
+            "rating": 3
+          },
+          {
+            "criteria": "vaf_phase1_collaboration",
+            "rating": 3
+          }
+        ]
+      }
+    ],
+    "histogram": {
+      "1": 24515,
+      "2": 6915,
+      "3": 21505,
+      "4": 75384,
+      "5": 693508
+    },
+    "price": 0,
+    "free": true,
+    "currency": "USD",
+    "priceText": "Free",
+    "available": true,
+    "offersIAP": true,
+    "IAPRange": "$4.99 - $199.99 per item",
+    "androidVersion": "8.0",
+    "androidVersionText": "8.0",
+    "androidMaxVersion": "VARY",
+    "developer": "PerplexityAI",
+    "developerId": "PerplexityAI",
+    "developerEmail": "support@perplexity.ai",
+    "developerWebsite": "https://www.perplexity.ai/privacy",
+    "developerLegalName": "Perplexity AI Inc",
+    "developerLegalEmail": "sergey@perplexity.ai",
+    "developerLegalAddress": "115 Sansome St, San Francisco, CA 94104, United States",
+    "developerLegalPhoneNumber": "+1 415-316-4395",
+    "privacyPolicy": "https://www.perplexity.ai/privacy",
+    "developerInternalID": "PerplexityAI",
+    "genre": "Productivity",
+    "genreId": "PRODUCTIVITY",
+    "categories": [
+      {
+        "name": "Productivity",
+        "id": "PRODUCTIVITY"
+      }
+    ],
+    "icon": "https://play-lh.googleusercontent.com/6STp0lYx2ctvQ-JZpXA1LeAAZIlq6qN9gpy7swLPlRhmp-hfvZePcBxqwVkqN2BH1g",
+    "headerImage": "https://play-lh.googleusercontent.com/U-VWTs2Yo4BwVrL2kWNQwSAYkX9nrLhdWGyDSdL1MaWTTABYlj1loB-FarHFd2m0t6k",
+    "screenshots": [
+      "https://play-lh.googleusercontent.com/G2o0hIJk7naF_0yIYJaoJ3LCHXSbVeaLYrD2TD2BcWHiGO8tme1TG0oPvUAH7_-w2g",
+      "https://play-lh.googleusercontent.com/GDpBeF2VdRizl-RSLHdU9PjfTolkngH6ubbI8GILcUKhVMkPN2bjweIf6AzBqil-Kw",
+      "https://play-lh.googleusercontent.com/nfgS2IJhBF9pdnFq1lS1kJL51eSqdWDs4kbbNAxdm6AffBNtTqWXDpX7kSNPMMMKvRY",
+      "https://play-lh.googleusercontent.com/VR9YykdaoziY4qDznWXJ0YFHlCGjikjQnsSzRBWidWVVra1267fQUqGcvXJlj7b13cJN",
+      "https://play-lh.googleusercontent.com/lJbsDlRaqkrIGdpf4PsWOmQn-oTRlYlKT1PHWq7eKWNk0ZL9to90bapndS_MjViCZSw",
+      "https://play-lh.googleusercontent.com/GcF127VqtaG8nAtq9plRlbpu8qZ9Jyh1WL5rBKC9c7V1NNcXPY0rCvW41kf-KxSaBw",
+      "https://play-lh.googleusercontent.com/7u9En2e4OQE6nGyR7m2yiDK-hrmpdr6RM_u9rW1uyj7o7HDvIdWBA6zQar7H8nfn--8",
+      "https://play-lh.googleusercontent.com/UslJwKtw-1O7tU23DWwc6WKZq71HJ95cI8fUqeZVEDtmkncuTWpZq5obP_ku2rSEWrg"
+    ],
+    "video": "https://www.youtube.com/embed/3SKVMV2Gots?ps=play&vq=large&rel=0&autohide=1&showinfo=0",
+    "videoImage": "https://play-lh.googleusercontent.com/U-VWTs2Yo4BwVrL2kWNQwSAYkX9nrLhdWGyDSdL1MaWTTABYlj1loB-FarHFd2m0t6k",
+    "contentRating": "Teen",
+    "contentRatingDescription": "Diverse Content: Discretion Advised",
+    "adSupported": false,
+    "released": "May 24, 2023",
+    "updated": 1751555825000,
+    "version": "2.48.2",
+    "comments": [],
+    "preregister": false,
+    "earlyAccessEnabled": false,
+    "isAvailableInPlayPass": false,
+    "appId": "ai.perplexity.app.android",
+    "url": "https://play.google.com/store/apps/details?id=ai.perplexity.app.android&hl=en&gl=us",
+    "AIReview": "<h2>Perplexity - Ask Anything Review</h2>\n<h3>Overview</h3>\n<p>Perplexity – Ask Anything is a productivity app designed to deliver immediate, credible answers to user queries. Leveraging advanced AI models from OpenAI, Anthropic, and Meta, it positions itself as a streamlined alternative to traditional search engines. With over 19 million installs and an impressive average rating of 4.7 stars, Perplexity has rapidly gained traction within the productivity app market. The core promise is simple: get accurate information quickly, regardless of how you prefer to interact – through typing or voice. This review assesses whether Perplexity lives up to its ambitious claims and provides a robust tool for knowledge discovery.</p>\n<h3>Key Features</h3>\n<p>The app’s functionality centers around several key features designed to enhance the research process:</p>\n<ul>\n<li><p><strong>Perplexity Pro Search:</strong>  This is the flagship feature, utilizing guided AI search. Instead of simply presenting a list of links (as traditional search engines do), Perplexity Pro actively asks clarifying questions to narrow down the user&#39;s intent and deliver more targeted answers. For example, if you ask “What are the best hiking trails near Yosemite?”, Perplexity Pro will immediately follow up with questions like &quot;Which elevation range are you looking for?&quot; or &quot;Are there any specific features you’re interested in (e.g., waterfalls, scenic views)?&quot;.</p>\n</li>\n<li><p><strong>Thread Follow-Up:</strong> This feature allows users to maintain a contextual conversation with the AI.  After receiving an initial answer, users can continue the discussion by adding more questions or refining their original query. The “Thread Follow-Up” functionality is crucial for delving deeper into complex topics and understanding nuanced perspectives – it&#39;s like having a knowledgeable research assistant available instantly.</p>\n</li>\n<li><p><strong>Voice Input:</strong> Perplexity incorporates voice recognition technology, enabling users to ask questions and receive answers hands-free. This feature adds significant convenience, particularly when multitasking or on the go. The app supports natural language processing allowing for conversational queries beyond simple keyword searches.</p>\n</li>\n<li><p><strong>Summary Generation:</strong>  Perplexity automatically generates concise summaries of lengthy texts or complex topics, providing a quick overview of key information. This is extremely useful for quickly digesting research papers, news articles, or detailed explanations.</p>\n</li>\n</ul>\n<h3>Strengths</h3>\n<p>Several aspects contribute to Perplexity’s success:</p>\n<ul>\n<li><p><strong>Accurate and Up-to-Date Information:</strong>  The app consistently delivers surprisingly accurate and current answers thanks to its reliance on leading AI models. The use of multiple AI providers (OpenAI, Anthropic, Meta) likely mitigates the risk of relying solely on one model&#39;s biases or limitations.</p>\n</li>\n<li><p><strong>Streamlined Research Process:</strong> The guided search functionality dramatically reduces the time spent sifting through irrelevant links and synthesizing information from multiple sources.  The Pro Search feature particularly shines in complex queries where traditional search engines would struggle to provide a satisfactory response.</p>\n</li>\n<li><p><strong>Intuitive User Interface:</strong> The app’s interface is clean, modern, and easy to navigate. The conversational format feels natural and reduces the cognitive load associated with traditional search interfaces.</p>\n</li>\n<li><p><strong>Cross-Device Syncing:</strong>  The ability to seamlessly sync data across devices ensures that users can continue their research regardless of whether they are on their phone, tablet, or computer.</p>\n</li>\n</ul>\n<h3>Areas for Improvement</h3>\n<p>Despite its strengths, Perplexity isn’t without areas needing refinement:</p>\n<ul>\n<li><p><strong>Cost of Pro Features:</strong> While the core functionality is free, advanced features like increased query limits and access to specific AI models require a subscription (Perplexity Pro). The pricing model may deter some users who only occasionally need more powerful search capabilities. </p>\n</li>\n<li><p><strong>Potential for Bias:</strong>  As with all AI-powered tools, Perplexity is susceptible to bias inherent in the training data of its underlying models. Users should critically evaluate the information provided and cross-reference it with other sources.</p>\n</li>\n<li><p><strong>Over-Reliance on Follow-Up Questions:</strong> While the thread follow-up feature is powerful, it can sometimes lead users down rabbit holes if not carefully managed.  Users need to be mindful of directing the conversation constructively.</p>\n</li>\n<li><p><strong>Limited Visual Content Integration:</strong> The app primarily delivers text-based answers. Integrating visual content like images and charts could significantly enhance its utility for certain types of queries (e.g., “Show me a graph of global temperature changes”).</p>\n</li>\n</ul>\n<h3>User Experience</h3>\n<p>The user experience is exceptionally smooth and intuitive.  The conversational interface feels remarkably natural, mimicking a dialogue with a knowledgeable expert. The voice input feature works reliably, providing a convenient alternative to typing. Navigation is straightforward, allowing users to quickly access key features and manage their search history. The app’s speed is also noteworthy; responses are typically delivered within seconds, even for complex queries.  The design prioritizes clarity and usability, ensuring that both novice and experienced users can effectively utilize the app&#39;s capabilities.</p>\n<h3>Value for Money</h3>\n<p>Currently, Perplexity offers significant value at its free tier. It provides a robust set of features that rival many paid productivity apps. The subscription price for Perplexity Pro is competitive, offering enhanced query limits, faster response times, and potentially access to more sophisticated AI models. However, the decision to subscribe ultimately depends on individual usage patterns and needs. If users require frequent access to advanced search capabilities or need to process large volumes of information, the Pro subscription can justify the cost.</p>\n<h3>Conclusion</h3>\n<p>Perplexity – Ask Anything represents a significant advancement in how we approach knowledge discovery. Combining powerful AI technology with an intuitive user interface, it offers a compelling alternative to traditional search engines and productivity apps. While there are areas for potential improvement (particularly regarding bias mitigation and visual content integration), Perplexity’s core functionality is remarkably effective and delivers substantial value, especially within its free tier.  With continued development and refinement, Perplexity has the potential to become an indispensable tool for students, researchers, professionals, and anyone seeking quick, accurate answers to their questions. The high install numbers and positive ratings strongly suggest that Perplexity is already fulfilling a significant need in the market.</p>"
+  }
+}

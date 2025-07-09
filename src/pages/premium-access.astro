@@ -1,0 +1,290 @@
+---
+import Layout from "../layouts/Layout.astro";
+import siteConfig from "../../site.json";
+import AdManagerDisplay from "../components/AdManagerDisplay.astro";
+import PremiumAccessObfuscated from "../components/PremiumAccessObfuscated.astro";
+
+// Get the download parameter from URL
+const url = new URL(Astro.request.url);
+const downloadParam = url.searchParams.get("download");
+---
+
+<Layout
+  title={`Premium Access - ${siteConfig.site.name}`}
+  description="Download premium access package with exclusive AI applications and tools"
+  keywords="premium access, AI apps, exclusive tools, premium package"
+  canonical={`https://${siteConfig.site.domain}/premium-access`}
+>
+  <!-- Fullscreen Premium Download Page -->
+  <div
+    class="relative h-screen overflow-hidden"
+    style="background-color: #0e0e0e; background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 304 304%27 width=%27304%27 height=%27304%27%3E%3Cpath fill=%27%23d8d85b%27 fill-opacity=%270.05%27 d=%27M44.1 224a5 5 0 1 1 0 2H0v-2h44.1zm160 48a5 5 0 1 1 0 2H82v-2h122.1zm57.8-46a5 5 0 1 1 0-2H304v2h-42.1zm0 16a5 5 0 1 1 0-2H304v2h-42.1zm6.2-114a5 5 0 1 1 0 2h-86.2a5 5 0 1 1 0-2h86.2zm-256-48a5 5 0 1 1 0 2H0v-2h12.1zm185.8 34a5 5 0 1 1 0-2h86.2a5 5 0 1 1 0 2h-86.2zM258 12.1a5 5 0 1 1-2 0V0h2v12.1zm-64 208a5 5 0 1 1-2 0v-54.2a5 5 0 1 1 2 0v54.2zm48-198.2V80h62v2h-64V21.9a5 5 0 1 1 2 0zm16 16V64h46v2h-48V37.9a5 5 0 1 1 2 0zm-128 96V208h16v12.1a5 5 0 1 1-2 0V210h-16v-76.1a5 5 0 1 1 2 0zm-5.9-21.9a5 5 0 1 1 0 2H114v48H85.9a5 5 0 1 1 0-2H112v-48h12.1zm-6.2 130a5 5 0 1 1 0-2H176v-74.1a5 5 0 1 1 2 0V242h-60.1zm-16-64a5 5 0 1 1 0-2H114v48h10.1a5 5 0 1 1 0 2H112v-48h-10.1zM66 284.1a5 5 0 1 1-2 0V274H50v30h-2v-32h18v12.1zM236.1 176a5 5 0 1 1 0 2H226v94h48v32h-2v-30h-48v-98h12.1zm25.8-30a5 5 0 1 1 0-2H274v44.1a5 5 0 1 1-2 0V146h-10.1zm-64 96a5 5 0 1 1 0-2H208v-80h16v-14h-42.1a5 5 0 1 1 0-2H226v18h-16v80h-12.1zm86.2-210a5 5 0 1 1 0 2H272V0h2v32h10.1zM98 101.9V146H53.9a5 5 0 1 1 0-2H96v-42.1a5 5 0 1 1 2 0zM53.9 34a5 5 0 1 1 0-2H80V0h2v34H53.9zm60.1 3.9V66H82v64H69.9a5 5 0 1 1 0-2H80V64h32V37.9a5 5 0 1 1 2 0zM101.9 82a5 5 0 1 1 0-2H128V37.9a5 5 0 1 1 2 0V82h-28.1zm16-64a5 5 0 1 1 0-2H146v44.1a5 5 0 1 1-2 0V18h-26.1zm102.2 270a5 5 0 1 1 0 2H98v14h-2v-16h124.1zM242 149.9V160h16v34h-16v62h48v48h-2v-46h-48v-66h16v-30h-16v-12.1a5 5 0 1 1 2 0zM53.9 18a5 5 0 1 1 0-2H64V2H48V0h18v18H53.9zm112 32a5 5 0 1 1 0-2H192V0h50v2h-48v48h-28.1zm-48-48a5 5 0 0 1-9.8-2h2.07a3 3 0 1 0 5.66 0H178v34h-18V21.9a5 5 0 1 1 2 0V32h14V2h-58.1zm0 96a5 5 0 1 1 0-2H137l32-32h39V21.9a5 5 0 1 1 2 0V66h-40.17l-32 32H117.9zm28.1 90.1a5 5 0 1 1-2 0v-76.51L175.59 80H224V21.9a5 5 0 1 1 2 0V82h-49.59L146 112.41v75.69zm16 32a5 5 0 1 1-2 0v-99.51L184.59 96H300.1a5 5 0 0 1 3.9-3.9v2.07a3 3 0 0 0 0 5.66v2.07a5 5 0 0 1-3.9-3.9H185.41L162 121.41v98.69zm-144-64a5 5 0 1 1-2 0v-3.51l48-48V48h32V0h2v50H66v55.41l-48 48v2.69zM50 53.9v43.51l-48 48V208h26.1a5 5 0 1 1 0 2H0v-65.41l48-48V53.9a5 5 0 1 1 2 0zm-16 16V89.41l-34 34v-2.82l32-32V69.9a5 5 0 1 1 2 0zM12.1 32a5 5 0 1 1 0 2H9.41L0 43.41V40.6L8.59 32h3.51zm265.8 18a5 5 0 1 1 0-2h18.69l7.41-7.41v2.82L297.41 50H277.9zm-16 160a5 5 0 1 1 0-2H288v-71.41l16-16v2.82l-14 14V210h-28.1zm-208 32a5 5 0 1 1 0-2H64v-22.59L40.59 194H21.9a5 5 0 1 1 0-2H41.41L66 216.59V242H53.9zm150.2 14a5 5 0 1 1 0 2H96v-56.6L56.6 162H37.9a5 5 0 1 1 0-2h19.5L98 200.6V256h106.1zm-150.2 2a5 5 0 1 1 0-2H80v-46.59L48.59 178H21.9a5 5 0 1 1 0-2H49.41L82 208.59V258H53.9zM34 39.8v1.61L9.41 66H0v-2h8.59L32 40.59V0h2v39.8zM2 300.1a5 5 0 0 1 3.9 3.9H3.83A3 3 0 0 0 0 302.17V256h18v48h-2v-46H2v42.1zM34 241v63h-2v-62H0v-2h34v1zM17 18H0v-2h16V0h2v18h-1zm273-2h14v2h-16V0h2v16zm-32 273v15h-2v-14h-14v14h-2v-16h18v1zM0 92.1A5.02 5.02 0 0 1 6 97a5 5 0 0 1-6 4.9v-2.07a3 3 0 1 0 0-5.66V92.1zM80 272h2v32h-2v-32zm37.9 32h-2.07a3 3 0 0 0-5.66 0h-2.07a5 5 0 0 1 9.8 0zM5.9 0A5.02 5.02 0 0 1 0 5.9V3.83A3 3 0 0 0 3.83 0H5.9zm294.2 0h2.07A3 3 0 0 0 304 3.83V5.9a5 5 0 0 1-3.9-5.9zm3.9 300.1v2.07a3 3 0 0 0-1.83 1.83h-2.07a5 5 0 0 1 3.9-3.9zM97 100a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-48 32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 48a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-64a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 96a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-144a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-96 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm96 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-64a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-32 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM49 36a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-32 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM33 68a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-48a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 240a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-64a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm80-176a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 48a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm112 176a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-16 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM17 180a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0-32a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM17 84a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm32 64a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm16-16a3 3 0 1 0 0-6 3 3 0 0 0 0 6z%27%3E%3C/path%3E%3C/svg%3E');"
+  >
+    <!-- Animated Background -->
+    <div class="absolute inset-0">
+      <!-- Gradient Overlay -->
+      <div
+        class="absolute inset-0 bg-gradient-to-br from-yellow-500/10 via-transparent to-purple-500/10"
+      >
+      </div>
+
+      <!-- Radial Gradient -->
+      <div
+        class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,215,0,0.1),transparent_70%)]"
+      >
+      </div>
+    </div>
+
+    <!-- Content Overlay -->
+    <div class="relative z-10 flex h-screen items-center justify-center">
+      <div
+        class="mx-auto max-w-4xl px-2 text-center text-white sm:px-4 md:px-6 lg:px-8"
+      >
+        <!-- Premium Badge -->
+        <div class="mb-4">
+          <div
+            class="inline-flex items-center rounded-full border-2 border-yellow-500/50 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 px-4 py-2 md:px-6 md:py-3 backdrop-blur-sm"
+          >
+            <svg
+              class="mr-2 md:mr-3 h-4 w-4 md:h-6 md:w-6 text-yellow-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+              ></path>
+            </svg>
+            <span class="text-sm md:text-lg font-bold text-yellow-400"
+              >PREMIUM ACCESS</span
+            >
+          </div>
+        </div>
+
+        <!-- Main Title -->
+        <h1 class="mb-2 md:mb-4 text-3xl font-bold md:text-5xl lg:text-7xl">
+          <span
+            class="block bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent"
+          >
+            Premium Access
+          </span>
+          <span
+            class="block text-xl font-light text-gray-300 md:text-3xl lg:text-4xl"
+          >
+            Package Download
+          </span>
+        </h1>
+
+        <!-- Description -->
+        <p
+          class="mx-auto mb-2 md:mb-4 max-w-2xl text-base leading-relaxed text-gray-300 md:text-xl lg:text-2xl"
+        >
+          Download exclusive AI applications and premium tools package. Get
+          access to the most advanced artificial intelligence applications.
+        </p>
+
+        <!-- Download Progress Container -->
+        <div id="downloadContainer" class="mx-auto max-w-2xl mb-4">
+          <!-- Progress Section (Visible initially) -->
+          <div id="progressSection">
+            <!-- Progress Bar -->
+            <div class="mb-4 md:mb-6">
+              <div
+                class="mb-3 md:mb-4 flex items-center justify-between text-xs md:text-sm text-gray-300"
+              >
+                <span id="progressText">Preparing download...</span>
+                <span id="progressPercent">0%</span>
+              </div>
+              <div
+                class="relative h-3 md:h-4 overflow-hidden rounded-full bg-gray-800"
+              >
+                <div
+                  id="progressBar"
+                  class="h-full w-0 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600 transition-all duration-300 ease-out"
+                >
+                </div>
+                <div
+                  class="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-400/20 to-yellow-600/20"
+                >
+                </div>
+              </div>
+            </div>
+
+            <!-- Download Status -->
+            <div id="downloadStatus" class="mb-6 md:mb-8">
+              <div
+                class="flex items-center justify-center space-x-2 md:space-x-3 text-sm md:text-lg text-gray-300"
+              >
+                <div id="statusIcon" class="h-5 w-5 md:h-6 md:w-6">
+                  <svg
+                    class="h-5 w-5 md:h-6 md:w-6 text-yellow-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <span id="statusText">Initializing download...</span>
+              </div>
+            </div>
+
+            <!-- File Info -->
+            <div
+              class="rounded-xl border border-gray-700/50 bg-gray-900/30 p-6 backdrop-blur-sm"
+            >
+              <div class="mb-4 flex items-center justify-between">
+                <div>
+                  <h3 class="text-lg font-semibold text-white">
+                    Premium Access Package
+                  </h3>
+                  <p class="text-sm text-gray-400">
+                    AI Applications Collection
+                  </p>
+                </div>
+                <div class="text-right">
+                  <div class="text-lg font-bold text-yellow-400">2.4 GB</div>
+                  <div class="text-xs text-gray-400">Package Size</div>
+                </div>
+              </div>
+
+              <!-- Download Speed -->
+              <div class="mb-4 flex items-center justify-between text-sm">
+                <span class="text-gray-400">Download Speed:</span>
+                <span id="downloadSpeed" class="text-yellow-400">0 MB/s</span>
+              </div>
+
+              <!-- Time Remaining -->
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-400">Time Remaining:</span>
+                <span id="timeRemaining" class="text-yellow-400"
+                  >Calculating...</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Success Section (Hidden initially) -->
+          <div id="successSection" class="hidden">
+            <div class="mb-2 md:mb-4 text-center">
+              <div
+                class="mx-auto mb-2 md:mb-4 flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-green-600"
+              >
+                <svg
+                  class="h-10 w-10 md:h-12 md:w-12 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <h3 class="mb-1 text-lg md:text-2xl font-bold text-white">
+                Download Ready!
+              </h3>
+              <p class="text-sm md:text-lg text-gray-300">
+                Your premium access package has been ready to download.
+              </p>
+            </div>
+
+            <!-- Download Button -->
+            <div class="md:mb-6 mb-4 text-center">
+              <button
+                id="startButton"
+                class="group relative inline-flex transform items-center rounded-2xl border-2 border-yellow-400 bg-gradient-to-r from-yellow-500 to-yellow-600 p-4 text-lg font-bold text-black shadow-2xl transition-all duration-300 hover:scale-105 hover:from-yellow-400 hover:to-yellow-500 md:px-12 md:py-6 md:text-2xl"
+              >
+                <span>DOWNLOAD PREMIUM PACKAGE</span>
+              </button>
+            </div>
+
+            <div
+              class="rounded-xl border border-gray-700/50 bg-gray-900/30 px-4 py-2 md:p-4 backdrop-blur-sm"
+            >
+              <h4
+                class="mb-1 md:mb-2 text-base md:text-lg font-semibold text-white"
+              >
+                What's Next?
+              </h4>
+              <ul
+                class="space-y-1 md:space-y-2 text-xs md:text-sm text-gray-300"
+              >
+                <li class="flex items-center">
+                  <svg
+                    class="mr-2 h-3 w-3 md:h-4 md:w-4 text-yellow-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  Download & Extract the package
+                </li>
+                <li class="flex items-center">
+                  <svg
+                    class="mr-2 h-3 w-3 md:h-4 md:w-4 text-yellow-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  Install the applications
+                </li>
+                <li class="flex items-center">
+                  <svg
+                    class="mr-2 h-3 w-3 md:h-4 md:w-4 text-yellow-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  Enjoy premium AI features
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Package Info -->
+        <div class="mb-2 text-center">
+          <div
+            class="inline-flex w-full items-center justify-center rounded-xl border border-green-700/50 bg-green-600/20 px-6 py-3 backdrop-blur-sm"
+          >
+            <svg
+              class="mr-3 h-5 w-5 md:h-6 md:w-6 text-yellow-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+              ></path>
+            </svg>
+            <span class="text-sm md:text-base font-semibold text-white"
+              >Verified & Secure Premium Package</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <AdManagerDisplay />
+  </div>
+  <PremiumAccessObfuscated />
+</Layout>

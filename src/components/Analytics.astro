@@ -1,0 +1,103 @@
+---
+import siteConfig from "../../site.json";
+---
+
+<!-- Google Tag (gtag.js) -->{
+  siteConfig.analytics.gtag.enabled && (
+    <>
+      <script
+        async
+        src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.analytics.gtag.code}`}
+      />
+      <script
+        set:html={`
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '${siteConfig.analytics.gtag.code}');
+  `}
+      />
+    </>
+  )
+}
+
+<!-- Google AdSense -->
+{
+  siteConfig.analytics.adsense.enabled && (
+    <>
+      <script
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${siteConfig.analytics.adsense.pub_id}`}
+        crossorigin="anonymous"
+      />
+    </>
+  )
+}
+
+<!-- Google Ad Manager -->
+{
+  siteConfig.analytics.admanager.enabled && (
+    <>
+      <script
+        async
+        src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"
+        crossorigin="anonymous"
+      />
+      <script
+        set:html={`
+    // Define Ad Manager paths
+    const adInterstitialPath = '${siteConfig.analytics.admanager.config.ad_interstitial_path}';
+    const adDisplayPath = '${siteConfig.analytics.admanager.config.ad_display_path}';
+
+    window.googletag = window.googletag || { cmd: [] };
+    let interstitialSlot;
+    googletag.cmd.push(() => {
+      // === Konfigurasi Interstisial ===
+      interstitialSlot = googletag.defineOutOfPageSlot(
+        adInterstitialPath,
+        googletag.enums.OutOfPageFormat.INTERSTITIAL
+      );
+
+      if (interstitialSlot) {
+        interstitialSlot.addService(googletag.pubads()).setConfig({
+          interstitial: {
+            triggers: {
+              unhideWindow: true,
+            },
+          },
+        });
+
+        console.log("Interstitial slot defined and configured.");
+
+        // OPTIMASI: Event listener dibuat lebih akurat tanpa 'else' yang menyesatkan.
+        googletag.pubads().addEventListener("slotOnload", (event) => {
+          if (interstitialSlot === event.slot) {
+            console.log("Interstitial ad asset has successfully loaded.");
+          }
+        });
+
+        googletag.pubads().set("document_language", "en");
+      }
+
+      // === Konfigurasi Slot Display ===
+      googletag
+        .defineSlot(adDisplayPath, [
+          [300, 100], [160, 600], [200, 200], [320, 480], [240, 400], [250, 250], [336, 280], [300, 250], [300, 600], [320, 50], 'fluid'
+        ], 'admanager-display-ad')
+        .addService(googletag.pubads());
+
+      // === Pengaturan Global & Eksekusi ===
+      googletag.pubads().enableSingleRequest();
+      googletag.enableServices();
+
+      // OPTIMASI: Pemanggilan display untuk interstisial digabung di sini.
+      // Ini memastikan slot siap untuk dipicu oleh interaksi pengguna.
+      if (interstitialSlot) {
+        googletag.display(interstitialSlot);
+      }
+    });
+  `}
+      />
+    </>
+  )
+}

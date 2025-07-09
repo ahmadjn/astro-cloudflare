@@ -1,0 +1,108 @@
+---
+export interface Props {
+  title: string;
+  summary: string;
+  rating: string;
+  installs: string;
+  developer: string;
+  icon: string;
+  id: string;
+  category: string;
+}
+
+const { title, summary, rating, installs, developer, icon, id, category } =
+  Astro.props;
+
+// Decode HTML entities in summary
+const decodedSummary = summary
+  .replace(/&amp;/g, "&")
+  .replace(/&lt;/g, "<")
+  .replace(/&gt;/g, ">")
+  .replace(/&quot;/g, '"')
+  .replace(/&#39;/g, "'");
+---
+
+<div
+  class="group overflow-hidden rounded-2xl border border-gray-800 bg-gray-900/50 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:border-yellow-500/50 hover:shadow-yellow-500/20"
+>
+  <!-- App Icon -->
+  <div
+    class="relative flex h-48 items-center justify-center overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900"
+  >
+    <!-- Background Header Image -->
+    <div class="absolute inset-0">
+      <img
+        src={icon.replace("-icon.webp", "-header.webp")}
+        alt={`${title} background`}
+        class="h-full w-full object-cover opacity-20 blur-sm"
+        loading="lazy"
+      />
+      <!-- Dark overlay -->
+      <div class="absolute inset-0 bg-black/60"></div>
+    </div>
+
+    <!-- App Icon -->
+    <div class="relative z-10">
+      <img
+        src={icon}
+        alt={`${title} icon`}
+        class="h-24 w-24 rounded-2xl object-cover shadow-2xl ring-2 ring-gray-700 transition-all duration-500 group-hover:ring-yellow-500/50"
+        loading="lazy"
+      />
+    </div>
+
+    <!-- Rating Badge -->
+    <div
+      class="absolute top-3 right-3 z-20 flex items-center rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 px-3 py-1 text-xs font-bold text-black shadow-lg"
+    >
+      <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+        ></path>
+      </svg>
+      {rating}
+    </div>
+  </div>
+
+  <!-- App Info -->
+  <div class="p-6">
+    <div class="mb-3">
+      <span
+        class="inline-block rounded-full border border-yellow-500/30 bg-yellow-500/20 px-3 py-1 text-xs font-medium text-yellow-400"
+      >
+        {category}
+      </span>
+    </div>
+
+    <h3
+      class="mb-2 line-clamp-2 text-lg font-bold text-white transition-all duration-300 group-hover:text-yellow-400"
+    >
+      {title}
+    </h3>
+
+    <p class="mb-4 line-clamp-2 h-10 text-sm text-gray-400">
+      {decodedSummary}
+    </p>
+
+    <div class="mb-4 flex items-center justify-between">
+      <span class="text-sm text-gray-500">{developer}</span>
+      <span class="text-sm text-gray-500">{installs}</span>
+    </div>
+
+    <a
+      href={`/app/${id}`}
+      class="block w-full transform rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-600 px-4 py-3 text-center font-bold text-black shadow-lg transition-all duration-300 hover:scale-105 hover:from-yellow-400 hover:to-yellow-500"
+    >
+      Learn More
+    </a>
+  </div>
+</div>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

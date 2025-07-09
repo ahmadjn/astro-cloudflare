@@ -1,0 +1,16 @@
+---
+import LandingPage from "../landing.astro";
+import siteConfig from "../../../site.json";
+
+// Static paths yang ingin di-prerender dari site.json
+export function getStaticPaths() {
+  return siteConfig.landing.static_slugs.map((slug) => ({
+    params: { slug },
+  }));
+}
+
+// Dapatkan slug untuk runtime SSR
+const { slug } = Astro.params;
+---
+
+<LandingPage />
