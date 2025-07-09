@@ -36,4 +36,5 @@ backup/
 src/content/posts/
 src/components/LandingScriptObfuscated.astro
 src/components/PremiumAccessObfuscated.astro
+src/components/PremiumAccessScriptObfuscated.astro
 src/components/UniversalAdScriptObfuscated.astro

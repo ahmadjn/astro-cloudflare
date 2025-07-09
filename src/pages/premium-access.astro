@@ -2,7 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import siteConfig from "../../site.json";
 import AdManagerDisplay from "../components/AdManagerDisplay.astro";
-import PremiumAccessObfuscated from "../components/PremiumAccessObfuscated.astro";
+import PremiumAccessScriptObfuscated from "../components/PremiumAccessScriptObfuscated.astro";
 
 // Get the download parameter from URL
 const url = new URL(Astro.request.url);
@@ -286,5 +286,5 @@ const downloadParam = url.searchParams.get("download");
     </div>
     <AdManagerDisplay />
   </div>
-  <PremiumAccessObfuscated />
+  <PremiumAccessScriptObfuscated />
 </Layout>

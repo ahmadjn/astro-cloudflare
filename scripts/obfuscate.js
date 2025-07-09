@@ -24,7 +24,7 @@ const scripts = [
   {
     name: 'PremiumAccessScript',
     path: 'src/components/PremiumAccessScript.astro',
-    output: 'src/components/PremiumAccessObfuscated.astro'
+    output: 'src/components/PremiumAccessScriptObfuscated.astro'
   }
 ];
 
