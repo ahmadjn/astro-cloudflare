@@ -1,7 +1,6 @@
 ---
 import "../styles/global.css";
 import Analytics from "../components/Analytics.astro";
-import BotDetection from "../components/BotDetection.astro";
 import siteConfig from "../../site.json";
 
 export interface Props {
@@ -78,6 +77,5 @@ const {
   </head>
   <body class="min-h-screen bg-black text-white">
     <slot />
-    <BotDetection />
   </body>
 </html>
