@@ -1,17 +1,20 @@
 #!/usr/bin/env node
 
-console.log('📦 Loading updater script...');
-
+// PENJELASAN: Memindahkan semua import ke atas agar lebih rapi dan sesuai standar.
 import { simpleGit } from 'simple-git';
-import path from 'path';
+import path, { dirname } from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { execSync } from 'child_process';
 
+console.log('📦 Memuat skrip updater...');
+
+// PENJELASAN: __filename dan __dirname tidak tersedia secara default di ES Modules.
+// Cara Anda membuatnya sudah benar, ini hanya untuk penegasan.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-console.log('✅ Dependencies loaded successfully');
+console.log('✅ Dependensi berhasil dimuat');
 
 // Konfigurasi repository
 const REPO_URL = 'https://github.com/ahmadjn/astro-cloudflare';
@@ -34,21 +37,20 @@ function log(message, type = 'info') {
 
 // Fungsi untuk mengecek apakah direktori adalah git repository
 async function isGitRepo(dir) {
-  try {
-    return fs.existsSync(path.join(dir, '.git'));
-  } catch (error) {
-    return false;
-  }
+  // PERBAIKAN: Menggunakan metode checkIsRepo() dari simple-git yang lebih andal
+  // daripada hanya memeriksa keberadaan folder .git.
+  const git = simpleGit(dir);
+  return await git.checkIsRepo();
 }
 
 // Fungsi untuk mengecek remote repository
 async function checkRemote(git) {
   try {
-    const remotes = await git.getRemotes();
+    const remotes = await git.getRemotes(true); // true untuk detail
     const originRemote = remotes.find(remote => remote.name === REMOTE_NAME);
     return originRemote;
   } catch (error) {
-    log(`Error checking remotes: ${error.message}`, 'error');
+    log(`Error saat memeriksa remote: ${error.message}`, 'error');
     return null;
   }
 }
@@ -56,247 +58,168 @@ async function checkRemote(git) {
 // Fungsi untuk setup repository jika belum ada
 async function setupRepository(git) {
   try {
-    log('🔧 Setting up repository...', 'info');
+    log('🔧 Menyiapkan repository...', 'info');
 
-    // Cek apakah sudah ada remote origin
     const originRemote = await checkRemote(git);
 
-    if (!originRemote) {
-      log('📡 Adding remote origin...', 'info');
+    if (!originRemote || originRemote.refs.fetch !== REPO_URL) {
+      if (originRemote) {
+        log('📡 Menghapus remote origin yang salah...', 'info');
+        await git.removeRemote(REMOTE_NAME);
+      }
+      log(`📡 Menambahkan remote origin: ${REPO_URL}`, 'info');
       await git.addRemote(REMOTE_NAME, REPO_URL);
-      log('✅ Remote origin added successfully', 'success');
+      log('✅ Remote origin berhasil ditambahkan', 'success');
     } else {
-      log('✅ Remote origin already exists', 'success');
+      log('✅ Remote origin sudah ada dan benar', 'success');
     }
 
-    // Fetch untuk mendapatkan semua branches
-    log('📥 Fetching from remote...', 'info');
-    await git.fetch([REMOTE_NAME]);
+    log('📥 Mengambil data dari remote...', 'info');
+    await git.fetch(REMOTE_NAME);
 
-    // Cek apakah branch main ada
-    const branches = await git.branch(['-a']);
-    const mainBranchExists = branches.all.some(branch => branch.includes('origin/main'));
+    const branches = await git.branch(['--remotes']);
+    const mainBranchExists = branches.all.some(branch => branch === `${REMOTE_NAME}/${BRANCH}`);
 
     if (!mainBranchExists) {
-      log('❌ Main branch not found in remote', 'error');
+      log(`❌ Branch '${BRANCH}' tidak ditemukan di remote!`, 'error');
       return false;
     }
 
-    // Cek branch saat ini
     const currentBranch = await git.branch();
-
     if (currentBranch.current !== BRANCH) {
-      log(`🔄 Switching to ${BRANCH} branch...`, 'info');
+      log(`🔄 Beralih ke branch '${BRANCH}'...`, 'info');
       try {
-        await git.checkout([BRANCH]);
-        log(`✅ Switched to ${BRANCH} branch`, 'success');
+        // Coba checkout ke branch yang sudah ada
+        await git.checkout(BRANCH);
       } catch (checkoutError) {
-        log(`🔄 Creating local ${BRANCH} branch...`, 'info');
-        await git.checkout(['-b', BRANCH, `origin/${BRANCH}`]);
-        log(`✅ Created and switched to ${BRANCH} branch`, 'success');
+        // Jika gagal, buat branch baru dari remote
+        log(`🌿 Membuat branch lokal '${BRANCH}' dari remote...`, 'info');
+        await git.checkout(['-b', BRANCH, `${REMOTE_NAME}/${BRANCH}`]);
       }
+      log(`✅ Berhasil beralih ke branch '${BRANCH}'`, 'success');
     }
 
     return true;
   } catch (error) {
-    log(`❌ Failed to setup repository: ${error.message}`, 'error');
+    log(`❌ Gagal menyiapkan repository: ${error.message}`, 'error');
     return false;
   }
 }
 
-// Fungsi untuk mengecek status git
-async function checkGitStatus(git) {
-  try {
-    const status = await git.status();
-    return status;
-  } catch (error) {
-    log(`Error checking git status: ${error.message}`, 'error');
-    return null;
-  }
-}
-
 // Fungsi untuk melakukan backup file yang dimodifikasi
-async function backupModifiedFiles(git, status) {
+async function backupModifiedFiles(status) {
   const backupDir = path.join(process.cwd(), 'backup', new Date().toISOString().replace(/[:.]/g, '-'));
+  const modifiedFiles = [...status.modified, ...status.created, ...status.deleted, ...status.conflicted];
+
+  if (modifiedFiles.length === 0) {
+    return null; // Tidak ada yang perlu di-backup
+  }
 
   try {
-    // Buat direktori backup
-    if (!fs.existsSync(path.dirname(backupDir))) {
-      fs.mkdirSync(path.dirname(backupDir), { recursive: true });
-    }
+    log(`📦 Membuat direktori backup di: ${backupDir}`, 'info');
     fs.mkdirSync(backupDir, { recursive: true });
-
-    // Backup file yang dimodifikasi
-    const modifiedFiles = [...status.modified, ...status.created, ...status.deleted];
 
     for (const file of modifiedFiles) {
       const sourcePath = path.join(process.cwd(), file);
       const backupPath = path.join(backupDir, file);
 
-      if (fs.existsSync(sourcePath)) {
-        // Buat direktori backup jika belum ada
+      if (fs.existsSync(sourcePath) && !fs.lstatSync(sourcePath).isDirectory()) {
         const backupFileDir = path.dirname(backupPath);
         if (!fs.existsSync(backupFileDir)) {
           fs.mkdirSync(backupFileDir, { recursive: true });
         }
-
-        // Copy file ke backup
         fs.copyFileSync(sourcePath, backupPath);
-        log(`Backed up: ${file}`, 'warning');
+        log(`  -> Menyimpan salinan: ${file}`, 'warning');
       }
     }
 
-    log(`Backup created at: ${backupDir}`, 'success');
+    log(`✅ Backup berhasil dibuat`, 'success');
     return backupDir;
   } catch (error) {
-    log(`Error creating backup: ${error.message}`, 'error');
+    log(`❌ Gagal membuat backup: ${error.message}`, 'error');
     return null;
   }
 }
 
 // Fungsi utama untuk update
 async function updateProject() {
-  console.log('🔧 Initializing updateProject function...');
-  log('🚀 Starting project update...', 'info');
+  log('🚀 Memulai proses update proyek...', 'info');
+  const git = simpleGit(process.cwd());
 
   try {
-    console.log('🔧 Creating simpleGit instance...');
-    // Inisialisasi simple-git
-    const git = simpleGit(process.cwd());
-    console.log('✅ simpleGit instance created');
-
-    // Cek apakah ini adalah git repository
     if (!(await isGitRepo(process.cwd()))) {
-      log('❌ This directory is not a git repository!', 'error');
-      log('💡 To initialize this as a git repository, run:', 'info');
-      log('   git init', 'info');
-      log('   git remote add origin https://github.com/ahmadjn/astro-cloudflare', 'info');
-      log('   git fetch origin', 'info');
-      log('   git checkout -b main origin/main', 'info');
+      log('❌ Direktori ini bukan sebuah git repository!', 'error');
+      log('💡 Untuk memulai, jalankan perintah berikut:', 'info');
+      log(`   git clone ${REPO_URL} .`, 'info');
+      log('   npm install', 'info');
       log('   npm run update', 'info');
-      process.exit(1);
+      return; // Menggunakan return agar tidak keluar dari proses node secara paksa
     }
 
-    // Setup repository jika diperlukan
-    const setupSuccess = await setupRepository(git);
-    if (!setupSuccess) {
-      log('❌ Failed to setup repository', 'error');
-      log('💡 Please check your internet connection and try again', 'warning');
-      process.exit(1);
+    if (!(await setupRepository(git))) {
+      log('❌ Gagal menyiapkan repository. Proses update dibatalkan.', 'error');
+      return;
     }
 
-    // Cek status git sebelum update
-    log('📊 Checking git status...', 'info');
-    const status = await checkGitStatus(git);
+    log('📊 Memeriksa status git sebelum update...', 'info');
+    await git.fetch(); // Selalu fetch terbaru sebelum cek status
+    const status = await git.status();
 
-    if (!status) {
-      log('❌ Failed to check git status', 'error');
-      process.exit(1);
+    const isDirty = status.files.length > 0;
+    if (isDirty) {
+      log('⚠️ Ditemukan perubahan lokal!', 'warning');
+      await backupModifiedFiles(status);
+      log('💾 Perubahan lokal akan di-stash (disimpan sementara)...', 'info');
+      await git.stash(['push', '--include-untracked']);
     }
 
-    // Cek apakah ada perubahan lokal
-    const hasLocalChanges = status.modified.length > 0 ||
-      status.created.length > 0 ||
-      status.deleted.length > 0 ||
-      status.staged.length > 0;
+    log(`📥 Menarik perubahan terbaru dari branch '${BRANCH}'...`, 'info');
+    const pullResult = await git.pull(REMOTE_NAME, BRANCH);
 
-    if (hasLocalChanges) {
-      log('⚠️  Local changes detected!', 'warning');
-      log(`Modified files: ${status.modified.length}`, 'warning');
-      log(`Created files: ${status.created.length}`, 'warning');
-      log(`Deleted files: ${status.deleted.length}`, 'warning');
-
-      // Backup file yang dimodifikasi
-      const backupDir = await backupModifiedFiles(git, status);
-
-      if (backupDir) {
-        log('💾 Backup created successfully', 'success');
-      } else {
-        log('❌ Failed to create backup', 'error');
-        process.exit(1);
-      }
+    if (pullResult.files.length > 0) {
+      log('✅ Berhasil menarik perubahan!', 'success');
+      pullResult.files.forEach(file => log(`  - ${file}`, 'info'));
+    } else {
+      log('✅ Proyek Anda sudah yang paling baru.', 'success');
     }
 
-    // Fetch latest changes
-    log('📥 Fetching latest changes from remote...', 'info');
-    try {
-      await git.fetch(['--all']);
-    } catch (fetchError) {
-      log('⚠️  Warning: Could not fetch from remote', 'warning');
-      log('💡 This might be due to network issues or authentication', 'info');
-      log('💡 For public repositories, this is usually not a problem', 'info');
-    }
-
-    // Cek branch saat ini
-    const currentBranch = await git.branch();
-    log(`📍 Current branch: ${currentBranch.current}`, 'info');
-
-    // Stash perubahan lokal jika ada
-    if (hasLocalChanges) {
-      log('💾 Stashing local changes...', 'info');
-      await git.stash(['--include-untracked']);
-    }
-
-    // Pull latest changes
-    log(`📥 Pulling latest changes from ${BRANCH}...`, 'info');
-    let pullResult;
-    try {
-      pullResult = await git.pull('origin', BRANCH);
-      log('✅ Pull completed successfully!', 'success');
-      log(`📝 Summary: ${pullResult.summary.changes} changes`, 'info');
-    } catch (pullError) {
-      log('❌ Failed to pull from remote', 'error');
-      log('💡 This might be due to:', 'info');
-      log('   - Network connectivity issues', 'info');
-      log('   - Authentication problems (if private repo)', 'info');
-      log('   - Local changes conflicting with remote', 'info');
-      log('💡 For public repositories, try:', 'info');
-      log('   git pull origin main', 'info');
-      process.exit(1);
-    }
-
-    // Pop stash jika ada perubahan yang di-stash
-    if (hasLocalChanges) {
-      log('🔄 Restoring local changes...', 'info');
+    if (isDirty) {
+      log('🔄 Mengembalikan perubahan lokal Anda...', 'info');
       try {
         await git.stash(['pop']);
-        log('✅ Local changes restored successfully!', 'success');
+        log('✅ Perubahan lokal berhasil dikembalikan.', 'success');
       } catch (stashError) {
-        log('⚠️  Warning: Could not restore all local changes', 'warning');
-        log('Check the backup directory for your modified files', 'info');
+        log('❌ Gagal mengembalikan stash secara otomatis karena ada konflik.', 'error');
+        log('💡 Perubahan Anda yang asli sudah di-backup.', 'info');
+        log('💡 Silakan selesaikan konflik secara manual lalu jalankan `git stash drop`', 'warning');
       }
     }
 
-    // Install dependencies jika package.json berubah
-    if (pullResult && pullResult.summary.changes > 0) {
-      log('📦 Checking for dependency updates...', 'info');
-
-      if (fs.existsSync('package.json')) {
-        log('📦 Installing/updating dependencies...', 'info');
-
-        const { execSync } = await import('child_process');
-        try {
-          execSync('npm install', { stdio: 'inherit' });
-          log('✅ Dependencies updated successfully!', 'success');
-        } catch (installError) {
-          log('❌ Error installing dependencies', 'error');
-          log('Please run "npm install" manually', 'warning');
-        }
+    const packageChanged = pullResult.files.includes('package.json') || pullResult.files.includes('package-lock.json');
+    if (packageChanged) {
+      log('📦 File package.json berubah, menjalankan `npm install`...', 'info');
+      try {
+        execSync('npm install', { stdio: 'inherit' });
+        log('✅ Dependensi berhasil di-update!', 'success');
+      } catch (installError) {
+        log('❌ Gagal menginstall dependensi.', 'error');
+        log('💡 Silakan jalankan "npm install" secara manual.', 'warning');
       }
     }
 
-    log('🎉 Project update completed successfully!', 'success');
-    log('💡 You may need to restart your development server', 'info');
+    log('🎉 Proses update proyek selesai!', 'success');
+    log('💡 Mungkin Anda perlu me-restart server development jika sedang berjalan.', 'info');
 
   } catch (error) {
-    log(`❌ Update failed: ${error.message}`, 'error');
-
+    log(`❌ Proses update gagal: ${error.message}`, 'error');
     if (error.message.includes('conflict')) {
-      log('🔧 Merge conflicts detected!', 'warning');
-      log('Please resolve conflicts manually and try again', 'warning');
+      log('🔧 Terdeteksi konflik!', 'warning');
+      log('💡 Silakan selesaikan konflik secara manual, lalu commit perubahan Anda.', 'warning');
     }
-
-    process.exit(1);
+    const statusAfterError = await git.status();
+    if (statusAfterError.isClean()) {
+      await git.stash(['pop']).catch(() => { });
+    }
   }
 }
 
@@ -305,71 +228,40 @@ function showHelp() {
   console.log(`
 🚀 Astro Cloudflare Project Updater
 
-Usage:
-  npm run update    - Update project from GitHub
-  npm run update:help - Show this help message
+Penggunaan:
+  npm run update      - Menjalankan proses update dari GitHub.
+  npm run update help - Menampilkan pesan bantuan ini.
 
-Features:
-  ✅ Automatic git pull from main branch
-  ✅ Backup local changes before update
-  ✅ Automatic dependency installation
-  ✅ Conflict detection and handling
-  ✅ Stash and restore local changes
-  ✅ Public repository support (no login required)
-  ✅ Automatic repository setup
+Fitur Utama:
+  ✅ Tarik otomatis dari branch 'main'.
+  ✅ Backup perubahan lokal sebelum update.
+  ✅ Stash dan kembalikan perubahan lokal secara otomatis.
+  ✅ Instalasi dependensi otomatis jika package.json berubah.
+  ✅ Penanganan konflik dasar.
+  ✅ Setup repository otomatis untuk pengguna baru.
 
-Backup Location:
+Lokasi Backup:
   ./backup/[timestamp]/
 
 Repository:
   ${REPO_URL}
-
-Authentication:
-  🔓 Public repository - no login required
-  🔐 For private repos, configure git credentials:
-     git config --global user.name "Your Name"
-     git config --global user.email "your.email@example.com"
-     git config --global credential.helper store
-
-Setup for New Users:
-  1. Install Git, Node.js, and npm
-  2. Clone repository: git clone ${REPO_URL}
-  3. Run updater: npm run update
   `);
 }
 
-// Main execution
-async function main() {
-  try {
-    console.log('🔍 Updater script starting...');
+// PERBAIKAN: Cara yang lebih andal untuk memeriksa apakah skrip ini dijalankan secara langsung.
+// Ini berfungsi di berbagai sistem operasi (Windows, Linux, macOS).
+const isRunningDirectly = path.resolve(process.argv[1]) === __filename;
 
-    const args = process.argv.slice(2);
-
-    if (args.includes('--help') || args.includes('-h') || args.includes('help')) {
-      showHelp();
-      return;
-    }
-
-    console.log('🚀 Calling updateProject...');
-    await updateProject();
-    console.log('✅ Update completed successfully!');
-
-  } catch (error) {
-    console.error('❌ Fatal error in updater:', error.message);
-    console.error('Stack trace:', error.stack);
-    process.exit(1);
+if (isRunningDirectly) {
+  const args = process.argv.slice(2);
+  if (args.includes('help')) {
+    showHelp();
+  } else {
+    updateProject().catch(err => {
+      log(`❌ Terjadi error fatal: ${err.message}`, 'error');
+      process.exit(1);
+    });
   }
-}
-
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (reason, promise) => {
-  log(`❌ Unhandled Rejection at: ${promise}, reason: ${reason}`, 'error');
-  process.exit(1);
-});
-
-// Run the updater
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main();
 }
 
 export { updateProject, showHelp };
