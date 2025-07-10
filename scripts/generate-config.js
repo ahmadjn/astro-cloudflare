@@ -59,10 +59,10 @@ export default defineConfig({
   },
   integrations: [
     playformCompress({
-      CSS: false,
+      CSS: true,
       HTML: true,
-      Image: false,
-      JavaScript: false,
+      Image: true,
+      JavaScript: true,
       SVG: true,
     }),
     compressor({

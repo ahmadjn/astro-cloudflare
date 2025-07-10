@@ -6,7 +6,7 @@
 		"astro": "astro",
 		"cf-typegen": "wrangler types",
 		"dev": "astro dev",
-		"build": "npm run generate-config && astro build",
+		"build": "npm run generate-config && astro build && node scripts/inject-bot-filter.js",
 		"preview": "npm run generate-config && astro build && wrangler dev",
 		"convert": "node scripts/convert-json-to-content.js",
 		"generate-config": "node scripts/generate-config.js",
@@ -14,7 +14,7 @@
 		"obfuscate": "node scripts/obfuscate.js",
 		"update": "node scripts/updater.js",
 		"update:help": "node scripts/updater.js --help",
-		"deploy": "npm run convert && npm run generate-config && npm run generate-ads && npm run obfuscate && astro build && wrangler deploy"
+		"deploy": "npm run convert && npm run generate-config && npm run generate-ads && npm run obfuscate && astro build && node scripts/inject-bot-filter.js && wrangler deploy"
 	},
 	"dependencies": {
 		"@astrojs/cloudflare": "^12.6.0",
