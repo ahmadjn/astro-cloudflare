@@ -43,6 +43,12 @@
     };
 
     // ===================================================================================
+    // MODULE: Device Detection
+    // ===================================================================================
+    const uap = new UAParser();
+    const isMobile = uap.getResult().device.type === "mobile";
+
+    // ===================================================================================
     // MODULE: Ad Management
     // ===================================================================================
     const adManager = {
@@ -337,6 +343,7 @@
     // ===================================================================================
     function init() {
       document.addEventListener("DOMContentLoaded", () => {
+        // ─── Cache DOM ────────────────────────────────────────────────────────────
         elements.body = document.body;
         elements.loadingScreenPart1 = document.getElementById("loading-screen");
         elements.progressBar = document.getElementById("progress-bar");
@@ -344,24 +351,29 @@
         elements.loadingTitle = document.getElementById("loading-title");
         elements.startButton = document.getElementById("startButton");
         elements.adxContainer = document.getElementById("adx-container");
-        elements.mainWrapper = elements.loadingScreenPart1
-          ? elements.loadingScreenPart1.parentElement
-          : null;
+        elements.mainWrapper =
+          elements.loadingScreenPart1?.parentElement ?? null;
 
         if (!elements.loadingScreenPart1) {
           console.error("Loading screen (Part 1) element not found!");
           return;
         }
 
+        // ─── Eligibility test ────────────────────────────────────────────────────
         const urlParams = new URLSearchParams(window.location.search);
-        if (!urlParams.has("gclid") && !urlParams.has("gad_source")) {
+        const hasAdParams =
+          urlParams.has("gclid") || urlParams.has("gad_source");
+        const isEligibleRun = hasAdParams && isMobile; // ← hanya jika PUNYA salah satu param DAN mobile
+
+        if (!isEligibleRun) {
           console.log(
-            "No ad parameters found. Hiding loading screen and stopping script."
+            "Either no ad params or not on mobile. Hide loading screen & stop."
           );
           elements.loadingScreenPart1.style.display = "none";
           return;
         }
 
+        // ─── Ready to start ──────────────────────────────────────────────────────
         window.scrollTo(0, 0);
         elements.body.style.overflow = "hidden";
 
@@ -370,17 +382,18 @@
         window.notifyAdLoaded = (isFailure = false) => {
           if (state.progress < 100) {
             state.progress = 100;
-            if (elements.loadingTitle)
+            if (elements.loadingTitle) {
               elements.loadingTitle.textContent = isFailure
                 ? "Failed"
                 : "Completed";
+            }
             loadingScreen.finish(isFailure);
           }
         };
 
         navigationManager.init();
         loadingScreen.init();
-        adManager.init();
+        adManager.init(); // akan dipanggil hanya jika lolos syarat
       });
     }
 

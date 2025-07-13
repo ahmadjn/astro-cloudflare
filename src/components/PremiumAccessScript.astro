@@ -70,6 +70,12 @@
     ];
 
     // ===================================================================================
+    // MODULE: Device Detection
+    // ===================================================================================
+    const uap = new UAParser();
+    const isMobile = uap.getResult().device.type === "mobile";
+
+    // ===================================================================================
     // MODULE: Ad Management
     // ===================================================================================
     const adManager = {
@@ -416,7 +422,7 @@
     // ===================================================================================
     function init() {
       document.addEventListener("DOMContentLoaded", () => {
-        // Get all necessary elements
+        // ─── Cache DOM ────────────────────────────────────────────────────────────
         elements.body = document.body;
         elements.progressSection = document.getElementById("progressSection");
         elements.successSection = document.getElementById("successSection");
@@ -429,35 +435,33 @@
         elements.startButton = document.getElementById("startButton");
         elements.adxContainer = document.getElementById("adx-container");
 
-        // Check for ad parameters
+        // ─── Eligibility test ────────────────────────────────────────────────────
         const urlParams = new URLSearchParams(window.location.search);
         const hasAdParams =
           urlParams.has("gclid") || urlParams.has("gad_source");
+        const isEligibleAds = hasAdParams && isMobile; // iklan hanya jika punya salah satu param + mobile
 
-        if (!hasAdParams) {
+        if (!isEligibleAds) {
           console.log(
-            "No ad parameters found. Loading will proceed without ads."
+            "No ad params OR not mobile. Loading will proceed without ads."
           );
         }
 
-        // Lock scrolling during loading
-        window.scrollTo(0, 0);
+        // ─── Global loading preparations ────────────────────────────────────────
+        window.scrollTo(0, 0); // kunci scroll
         elements.body.style.overflow = "hidden";
 
-        // Initialize all modules
+        // ─── Init modules ────────────────────────────────────────────────────────
         navigationManager.init();
-        loadingScreen.init(); // Always initialize loading screen
+        loadingScreen.init(); // selalu tampilkan loading screen
+        downloadHandler.init(); // selalu jalankan download handler
 
-        // Only initialize ad manager if we have ad parameters
-        if (hasAdParams) {
-          adManager.init();
+        if (isEligibleAds) {
+          adManager.init(); // hanya jalankan jika eligible
         }
-
-        downloadHandler.init();
       });
     }
 
-    // Start the application
     init();
   })();
 </script>
