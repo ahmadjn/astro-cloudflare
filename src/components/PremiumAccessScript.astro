@@ -388,12 +388,7 @@
           window.location.href = `/download/${downloadParam}?gad_source=1`;
         } else {
           // Fallback behavior
-          const link = document.createElement("a");
-          link.href = "#";
-          link.download = "premium-package.zip";
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+          window.location.href = `/terabox-access`;
         }
 
         // Update button to show success
