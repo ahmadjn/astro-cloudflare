@@ -14,12 +14,13 @@ let adsTxtContent = "";
 
 // Add AdSense accounts
 if (siteConfig.analytics.adsense.enabled) {
-  adsTxtContent += `${siteConfig.analytics.adsense.pub_id.replace("ca-pub-", "pub-")}, DIRECT, f08c47fec0942fa0\n`;
+
+  adsTxtContent += `google.com, ${siteConfig.analytics.adsense.pub_id.replace("ca-pub-", "pub-")}, DIRECT, f08c47fec0942fa0\n`;
 }
 
 // Add Ad Manager account
 if (siteConfig.analytics.admanager.enabled) {
-  adsTxtContent += `${siteConfig.analytics.admanager.config.pub_id.replace("ca-pub-", "pub-")}, DIRECT, f08c47fec0942fa0\n`;
+  adsTxtContent += `google.com, ${siteConfig.analytics.admanager.config.pub_id.replace("ca-pub-", "pub-")}, DIRECT, f08c47fec0942fa0\n`;
 }
 
 // Write to public directory
