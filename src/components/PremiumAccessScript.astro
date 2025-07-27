@@ -8,8 +8,22 @@
     "use strict";
 
     // ===================================================================================
-    // MODULE: CONFIGURATION
+    // MODULE: UTILITIES & CONFIGURATION
     // ===================================================================================
+    const utils = {
+      consoleStyles: {
+        progress:
+          "color: #00ffff; background: linear-gradient(45deg, #0c4a6e, #075985); padding: 2px 6px; border-radius: 4px; font-weight: bold;",
+        process:
+          "color: #ffd700; background: linear-gradient(45deg, #92400e, #b45309); padding: 2px 6px; border-radius: 4px; font-weight: bold;",
+        info: "color: #87ceeb; background: linear-gradient(45deg, #1e40af, #3b82f6); padding: 2px 6px; border-radius: 4px; font-weight: bold;",
+        success:
+          "color: #90ee90; background: linear-gradient(45deg, #166534, #22c55e); padding: 2px 6px; border-radius: 4px; font-weight: bold;",
+        error:
+          "color: #ffb6c1; background: linear-gradient(45deg, #991b1b, #dc2626); padding: 2px 6px; border-radius: 4px; font-weight: bold;",
+      },
+    };
+
     const config = {
       LOADING_DURATION: 8000,
       LOADING_INTERVAL: 200,
@@ -76,50 +90,57 @@
     const isMobile = uap.getResult().device.type === "mobile";
 
     // ===================================================================================
-    // MODULE: Ad Management
+    // MODULE: Ad Management (Retry Logic)
     // ===================================================================================
     const adManager = {
       init() {
-        if (typeof googletag === "undefined" || !googletag.cmd) {
-          console.error("Google Publisher Tag (GPT.js) not loaded.");
-          return;
-        }
-
+        console.log(
+          "%c[ADS] Initializing AdX with Retry Logic...",
+          utils.consoleStyles.info
+        );
+        // Menunggu googletag siap, lalu memulai proses
         googletag.cmd.push(() => {
+          // Cari slot yang sudah didefinisikan di <head>
           const allSlots = googletag.pubads().getSlots();
           state.adSlotObject = allSlots.find(
             (slot) => slot.getSlotElementId() === config.ADX_SLOT_ID
           );
 
           if (!state.adSlotObject) {
-            console.error(`Ad slot with ID '${config.ADX_SLOT_ID}' not found.`);
+            console.error(
+              `%c[ADS] Ad slot with ID '${config.ADX_SLOT_ID}' not found.`,
+              utils.consoleStyles.error
+            );
             return;
           }
 
+          // Siapkan listener untuk hasil render iklan
           googletag
             .pubads()
             .addEventListener(
               "slotRenderEnded",
               this.handleSlotRender.bind(this)
             );
+
+          // Mulai percobaan pertama. Permintaan awal sudah dibuat oleh googletag.display() di HTML.
+          // Kita hanya perlu menyetel timeout untuknya.
           this.startAttemptTimeout();
         });
       },
 
       handleSlotRender(event) {
-        if (
-          state.decisionMade ||
-          event.slot.getSlotElementId() !== config.ADX_SLOT_ID
-        )
-          return;
+        if (state.decisionMade) return;
+        if (event.slot.getSlotElementId() !== config.ADX_SLOT_ID) return;
 
+        // Jika ada respons, batalkan timeout untuk percobaan saat ini
         clearTimeout(state.adxRetryTimer);
         state.adxAttemptCount++;
 
+        // Jika slot terisi (sukses)
         if (!event.isEmpty) {
           console.log(
-            `%c[ADS] AdX FILLED on attempt #${state.adxAttemptCount}.`,
-            "color: #90ee90;"
+            `%c[ADS] AdX FILLED on attempt #${state.adxAttemptCount}. Process complete.`,
+            utils.consoleStyles.success
           );
           state.winningAdElement = elements.adxContainer;
           state.decisionMade = true;
@@ -140,10 +161,12 @@
               adManager.finalizeAdPosition();
             }, config.AD_FINALIZE_DELAY);
           }
-        } else {
+        }
+        // Jika slot kosong, coba lagi (jika masih ada jatah)
+        else {
           console.log(
             `%c[ADS] AdX UNFILLED on attempt #${state.adxAttemptCount}.`,
-            "color: #ffb6c1;"
+            utils.consoleStyles.error
           );
           this.tryNextAttempt();
         }
@@ -151,7 +174,10 @@
 
       tryNextAttempt() {
         if (state.adxAttemptCount >= config.RETRY_TIMEOUTS.length) {
-          console.error("All ad retry attempts failed.");
+          console.log(
+            "%c[ADS] All retry attempts failed. Hiding ad container.",
+            utils.consoleStyles.error
+          );
           if (elements.adxContainer)
             elements.adxContainer.style.display = "none";
           state.decisionMade = true;
@@ -163,6 +189,10 @@
           return;
         }
 
+        console.log(
+          `%c[ADS] Starting attempt #${state.adxAttemptCount + 1}...`,
+          utils.consoleStyles.process
+        );
         this.startAttemptTimeout();
         googletag.pubads().refresh([state.adSlotObject]);
       },
@@ -172,7 +202,10 @@
         const timeoutDuration = config.RETRY_TIMEOUTS[currentAttemptIndex];
 
         state.adxRetryTimer = setTimeout(() => {
-          console.warn(`Ad attempt #${currentAttemptIndex + 1} TIMED OUT.`);
+          console.log(
+            `%c[ADS] Attempt #${currentAttemptIndex + 1} TIMED OUT after ${timeoutDuration / 1000}s.`,
+            utils.consoleStyles.error
+          );
           state.adxAttemptCount++;
           this.tryNextAttempt();
         }, timeoutDuration);

@@ -8,8 +8,22 @@
     "use strict";
 
     // ===================================================================================
-    // MODULE: CONFIGURATION
+    // MODULE: UTILITIES & CONFIGURATION
     // ===================================================================================
+    const utils = {
+      consoleStyles: {
+        progress:
+          "color: #00ffff; background: linear-gradient(45deg, #0c4a6e, #075985); padding: 2px 6px; border-radius: 4px; font-weight: bold;",
+        process:
+          "color: #ffd700; background: linear-gradient(45deg, #92400e, #b45309); padding: 2px 6px; border-radius: 4px; font-weight: bold;",
+        info: "color: #87ceeb; background: linear-gradient(45deg, #1e40af, #3b82f6); padding: 2px 6px; border-radius: 4px; font-weight: bold;",
+        success:
+          "color: #90ee90; background: linear-gradient(45deg, #166534, #22c55e); padding: 2px 6px; border-radius: 4px; font-weight: bold;",
+        error:
+          "color: #ffb6c1; background: linear-gradient(45deg, #991b1b, #dc2626); padding: 2px 6px; border-radius: 4px; font-weight: bold;",
+      },
+    };
+
     const config = {
       LOADING_DURATION: 8000,
       LOADING_INTERVAL: 50,
@@ -49,55 +63,67 @@
     const isMobile = uap.getResult().device.type === "mobile";
 
     // ===================================================================================
-    // MODULE: Ad Management
+    // MODULE: Ad Management (Retry Logic)
     // ===================================================================================
     const adManager = {
       init() {
-        if (typeof googletag === "undefined" || !googletag.cmd) {
-          console.error("Google Publisher Tag (GPT.js) not loaded.");
-          loadingScreen.init();
-          return;
-        }
+        console.log(
+          "%c[ADS] Initializing AdX with Retry Logic...",
+          utils.consoleStyles.info
+        );
+        // Menunggu googletag siap, lalu memulai proses
         googletag.cmd.push(() => {
+          // Cari slot yang sudah didefinisikan di <head>
           const allSlots = googletag.pubads().getSlots();
           state.adSlotObject = allSlots.find(
             (slot) => slot.getSlotElementId() === config.ADX_SLOT_ID
           );
+
           if (!state.adSlotObject) {
-            console.error(`Ad slot with ID '${config.ADX_SLOT_ID}' not found.`);
+            console.error(
+              `%c[ADS] Ad slot with ID '${config.ADX_SLOT_ID}' not found.`,
+              utils.consoleStyles.error
+            );
             return;
           }
+
+          // Siapkan listener untuk hasil render iklan
           googletag
             .pubads()
             .addEventListener(
               "slotRenderEnded",
               this.handleSlotRender.bind(this)
             );
+
+          // Mulai percobaan pertama. Permintaan awal sudah dibuat oleh googletag.display() di HTML.
+          // Kita hanya perlu menyetel timeout untuknya.
           this.startAttemptTimeout();
         });
       },
 
       handleSlotRender(event) {
-        if (
-          state.decisionMade ||
-          event.slot.getSlotElementId() !== config.ADX_SLOT_ID
-        )
-          return;
+        if (state.decisionMade) return;
+        if (event.slot.getSlotElementId() !== config.ADX_SLOT_ID) return;
+
+        // Jika ada respons, batalkan timeout untuk percobaan saat ini
         clearTimeout(state.adxRetryTimer);
         state.adxAttemptCount++;
 
+        // Jika slot terisi (sukses)
         if (!event.isEmpty) {
           console.log(
-            `%c[ADS] AdX FILLED on attempt #${state.adxAttemptCount}.`,
-            "color: #90ee90;"
+            `%c[ADS] AdX FILLED on attempt #${state.adxAttemptCount}. Process complete.`,
+            utils.consoleStyles.success
           );
           state.winningAdElement = elements.adxContainer;
           state.decisionMade = true;
           if (window.notifyAdLoaded) window.notifyAdLoaded();
-        } else {
+        }
+        // Jika slot kosong, coba lagi (jika masih ada jatah)
+        else {
           console.log(
             `%c[ADS] AdX UNFILLED on attempt #${state.adxAttemptCount}.`,
-            "color: #ffb6c1;"
+            utils.consoleStyles.error
           );
           this.tryNextAttempt();
         }
@@ -105,15 +131,20 @@
 
       tryNextAttempt() {
         if (state.adxAttemptCount >= config.RETRY_TIMEOUTS.length) {
-          console.error("All ad retry attempts failed.");
+          console.log(
+            "%c[ADS] All retry attempts failed. Hiding ad container.",
+            utils.consoleStyles.error
+          );
           if (elements.adxContainer)
             elements.adxContainer.style.display = "none";
           state.decisionMade = true;
-          if (state.progress < 100) {
-            window.notifyAdLoaded(true); // Kirim flag gagal
-          }
           return;
         }
+
+        console.log(
+          `%c[ADS] Starting attempt #${state.adxAttemptCount + 1}...`,
+          utils.consoleStyles.process
+        );
         this.startAttemptTimeout();
         googletag.pubads().refresh([state.adSlotObject]);
       },
@@ -121,8 +152,12 @@
       startAttemptTimeout() {
         const currentAttemptIndex = state.adxAttemptCount;
         const timeoutDuration = config.RETRY_TIMEOUTS[currentAttemptIndex];
+
         state.adxRetryTimer = setTimeout(() => {
-          console.warn(`Ad attempt #${currentAttemptIndex + 1} TIMED OUT.`);
+          console.log(
+            `%c[ADS] Attempt #${currentAttemptIndex + 1} TIMED OUT after ${timeoutDuration / 1000}s.`,
+            utils.consoleStyles.error
+          );
           state.adxAttemptCount++;
           this.tryNextAttempt();
         }, timeoutDuration);
@@ -267,51 +302,51 @@
         const container = document.createElement("div");
         container.className = "loading-container-part2";
         container.innerHTML = `
-            <div class="border-line border-top"></div>
-            <div class="border-line border-right"></div>
-            <div class="border-line border-bottom"></div>
-            <div class="border-line border-left"></div>
-            <div class="loading-text">
-                <div class="loading-dots">
-                    <span class="dot dot-1">.</span>
-                    <span class="dot dot-2">.</span>
-                    <span class="dot dot-3">.</span>
-                </div>
-                <h2>ADVERTISEMENT IS LOADING</h2>
-            </div>
-        `;
+          <div class="border-line border-top"></div>
+          <div class="border-line border-right"></div>
+          <div class="border-line border-bottom"></div>
+          <div class="border-line border-left"></div>
+          <div class="loading-text">
+              <div class="loading-dots">
+                  <span class="dot dot-1">.</span>
+                  <span class="dot dot-2">.</span>
+                  <span class="dot dot-3">.</span>
+              </div>
+              <h2>ADVERTISEMENT IS LOADING</h2>
+          </div>
+      `;
         elements.body.appendChild(container);
         elements.loadingScreenPart2 = container;
 
         const style = document.createElement("style");
         style.id = "loading-part2-styles";
         style.innerHTML = `
-            .loading-container-part2 {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100vw;
-                height: 100vh;
-                z-index: 99998;
-                pointer-events: none;
-            }
-            .border-line { position: absolute; z-index: 100001; animation-fill-mode: both; animation-timing-function: linear; animation-duration: 0.75s; animation-iteration-count: 1; }
-            .border-top { top: 0; left: 0; height: 6px; width: 0; animation-name: drawTopBorder; animation-delay: 0s; background: linear-gradient(90deg, #ffd700, #ffb347, #ffa500, #ff8c00); }
-            .border-right { top: 0; right: 0; width: 6px; height: 0; animation-name: drawRightBorder; animation-delay: 0.75s; background: linear-gradient(180deg, #ff8c00, #ffd700); }
-            .border-bottom { bottom: 0; right: 0; height: 6px; width: 0; animation-name: drawBottomBorder; animation-delay: 1.5s; background: linear-gradient(270deg, #ff8c00, #ffb347, #ffa500, #ffd700); }
-            .border-left { bottom: 0; left: 0; width: 6px; height: 0; animation-name: drawLeftBorder; animation-delay: 2.25s; background: linear-gradient(0deg, #ffd700, #ff8c00); }
-            .loading-text { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); text-align: center; animation: fadeInOut 3s ease-in-out 1; }
-            .loading-text h2 { font-size: 0.8rem; font-weight: 500; text-transform: uppercase; color: white; margin: 0; letter-spacing: normal; }
-            .loading-dots { display: flex; justify-content: center; gap: 0.25rem; }
-            .dot { font-size: 1.5rem; color: #ffd700; animation: dotPulse 1s ease-in-out infinite; }
-            .dot-2 { animation-delay: 0.15s; } .dot-3 { animation-delay: 0.3s; }
-            @keyframes drawTopBorder { 100% { width: 100vw; } }
-            @keyframes drawRightBorder { 100% { height: 100vh; } }
-            @keyframes drawBottomBorder { 100% { width: 100vw; } }
-            @keyframes drawLeftBorder { 100% { height: 100vh; } }
-            @keyframes fadeInOut { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
-            @keyframes dotPulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
-        `;
+          .loading-container-part2 {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100vw;
+              height: 100vh;
+              z-index: 99998;
+              pointer-events: none;
+          }
+          .border-line { position: absolute; z-index: 100001; animation-fill-mode: both; animation-timing-function: linear; animation-duration: 0.75s; animation-iteration-count: 1; }
+          .border-top { top: 0; left: 0; height: 6px; width: 0; animation-name: drawTopBorder; animation-delay: 0s; background: linear-gradient(90deg, #ffd700, #ffb347, #ffa500, #ff8c00); }
+          .border-right { top: 0; right: 0; width: 6px; height: 0; animation-name: drawRightBorder; animation-delay: 0.75s; background: linear-gradient(180deg, #ff8c00, #ffd700); }
+          .border-bottom { bottom: 0; right: 0; height: 6px; width: 0; animation-name: drawBottomBorder; animation-delay: 1.5s; background: linear-gradient(270deg, #ff8c00, #ffb347, #ffa500, #ffd700); }
+          .border-left { bottom: 0; left: 0; width: 6px; height: 0; animation-name: drawLeftBorder; animation-delay: 2.25s; background: linear-gradient(0deg, #ffd700, #ff8c00); }
+          .loading-text { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); text-align: center; animation: fadeInOut 3s ease-in-out 1; }
+          .loading-text h2 { font-size: 0.8rem; font-weight: 500; text-transform: uppercase; color: white; margin: 0; letter-spacing: normal; }
+          .loading-dots { display: flex; justify-content: center; gap: 0.25rem; }
+          .dot { font-size: 1.5rem; color: #ffd700; animation: dotPulse 1s ease-in-out infinite; }
+          .dot-2 { animation-delay: 0.15s; } .dot-3 { animation-delay: 0.3s; }
+          @keyframes drawTopBorder { 100% { width: 100vw; } }
+          @keyframes drawRightBorder { 100% { height: 100vh; } }
+          @keyframes drawBottomBorder { 100% { width: 100vw; } }
+          @keyframes drawLeftBorder { 100% { height: 100vh; } }
+          @keyframes fadeInOut { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+          @keyframes dotPulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+      `;
         document.head.appendChild(style);
       },
     };
