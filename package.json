@@ -1,7 +1,7 @@
 {
 	"name": "astro-cloudflare",
 	"type": "module",
-	"version": "0.0.1",
+	"version": "1.2.3",
 	"scripts": {
 		"astro": "astro",
 		"cf-typegen": "wrangler types",

@@ -44,6 +44,7 @@
       adxRetryTimer: null,
       adSlotObject: null,
       loadingComplete: false,
+      originalAdStyles: null, // Store original ad styles
     };
 
     const elements = {
@@ -96,20 +97,20 @@
       init() {
         console.log(
           "%c[ADS] Initializing AdX with Retry Logic...",
-          utils.consoleStyles.info
+          utils.consoleStyles.info,
         );
         // Menunggu googletag siap, lalu memulai proses
         googletag.cmd.push(() => {
           // Cari slot yang sudah didefinisikan di <head>
           const allSlots = googletag.pubads().getSlots();
           state.adSlotObject = allSlots.find(
-            (slot) => slot.getSlotElementId() === config.ADX_SLOT_ID
+            (slot) => slot.getSlotElementId() === config.ADX_SLOT_ID,
           );
 
           if (!state.adSlotObject) {
             console.error(
               `%c[ADS] Ad slot with ID '${config.ADX_SLOT_ID}' not found.`,
-              utils.consoleStyles.error
+              utils.consoleStyles.error,
             );
             return;
           }
@@ -119,7 +120,7 @@
             .pubads()
             .addEventListener(
               "slotRenderEnded",
-              this.handleSlotRender.bind(this)
+              this.handleSlotRender.bind(this),
             );
 
           // Mulai percobaan pertama. Permintaan awal sudah dibuat oleh googletag.display() di HTML.
@@ -140,11 +141,19 @@
         if (!event.isEmpty) {
           console.log(
             `%c[ADS] AdX FILLED on attempt #${state.adxAttemptCount}. Process complete.`,
-            utils.consoleStyles.success
+            utils.consoleStyles.success,
           );
           state.winningAdElement = elements.adxContainer;
           state.decisionMade = true;
-          state.winningAdElement.style.opacity = ".0";
+          // Store original styles before any modifications
+          state.originalAdStyles = {
+            position: state.winningAdElement.style.position,
+            top: state.winningAdElement.style.top,
+            left: state.winningAdElement.style.left,
+            transform: state.winningAdElement.style.transform,
+            zIndex: state.winningAdElement.style.zIndex,
+            transition: state.winningAdElement.style.transition,
+          };
 
           // Handle different scenarios based on loading state
           if (state.progress < 100) {
@@ -166,7 +175,7 @@
         else {
           console.log(
             `%c[ADS] AdX UNFILLED on attempt #${state.adxAttemptCount}.`,
-            utils.consoleStyles.error
+            utils.consoleStyles.error,
           );
           this.tryNextAttempt();
         }
@@ -176,7 +185,7 @@
         if (state.adxAttemptCount >= config.RETRY_TIMEOUTS.length) {
           console.log(
             "%c[ADS] All retry attempts failed. Hiding ad container.",
-            utils.consoleStyles.error
+            utils.consoleStyles.error,
           );
           if (elements.adxContainer)
             elements.adxContainer.style.display = "none";
@@ -191,7 +200,7 @@
 
         console.log(
           `%c[ADS] Starting attempt #${state.adxAttemptCount + 1}...`,
-          utils.consoleStyles.process
+          utils.consoleStyles.process,
         );
         this.startAttemptTimeout();
         googletag.pubads().refresh([state.adSlotObject]);
@@ -204,7 +213,7 @@
         state.adxRetryTimer = setTimeout(() => {
           console.log(
             `%c[ADS] Attempt #${currentAttemptIndex + 1} TIMED OUT after ${timeoutDuration / 1000}s.`,
-            utils.consoleStyles.error
+            utils.consoleStyles.error,
           );
           state.adxAttemptCount++;
           this.tryNextAttempt();
@@ -212,33 +221,36 @@
       },
 
       finalizeAdPosition() {
-        if (!state.winningAdElement || !elements.startButton) {
-          console.error("Cannot finalize ad position: missing elements");
+        if (!state.winningAdElement) {
+          console.error("Cannot finalize ad position: missing ad element");
           return;
         }
 
-        console.log("[ADS] Finalizing ad position relative to start button.");
+        console.log("[ADS] Finalizing ad position - restoring to original.");
 
-        // Ensure start button is visible and get its position
-        const startButtonRect = elements.startButton.getBoundingClientRect();
-        const adRect = state.winningAdElement.getBoundingClientRect();
+        // Restore original styles (return ad to original position)
+        if (state.originalAdStyles) {
+          state.winningAdElement.style.position =
+            state.originalAdStyles.position || "";
+          state.winningAdElement.style.top = state.originalAdStyles.top || "";
+          state.winningAdElement.style.left = state.originalAdStyles.left || "";
+          state.winningAdElement.style.transform =
+            state.originalAdStyles.transform || "";
+          state.winningAdElement.style.zIndex =
+            state.originalAdStyles.zIndex || "";
+          state.winningAdElement.style.transition =
+            state.originalAdStyles.transition || "";
+        } else {
+          // Fallback: remove inline styles to restore original
+          state.winningAdElement.style.position = "";
+          state.winningAdElement.style.top = "";
+          state.winningAdElement.style.left = "";
+          state.winningAdElement.style.transform = "";
+          state.winningAdElement.style.zIndex = "";
+          state.winningAdElement.style.transition = "";
+        }
 
-        // Calculate position above the start button
-        const newStartHeight = startButtonRect.height / 2;
-        const newTargetHeight = adRect.height / 2.2;
-        const finalY = startButtonRect.top + newStartHeight - newTargetHeight;
-
-        // Apply final positioning
-        state.winningAdElement.style.position = "fixed";
-        // state.winningAdElement.style.left = "50%";
-        // state.winningAdElement.style.transform = "translateX(-50%)";
-        state.winningAdElement.style.top = `${finalY}px`;
-        // state.winningAdElement.style.top = "30%";
-        state.winningAdElement.style.opacity = ".0";
-        state.winningAdElement.style.zIndex = "99999";
-        // state.winningAdElement.style.transition = "opacity 0.5s ease-out";
-
-        console.log("[ADS] Ad positioned successfully.");
+        console.log("[ADS] Ad restored to original position.");
       },
     };
 
@@ -287,7 +299,7 @@
           }
           state.statusIndex = Math.min(
             state.statusIndex + 1,
-            statuses.length - 1
+            statuses.length - 1,
           );
         }
 
@@ -408,7 +420,7 @@
 
         elements.startButton.addEventListener(
           "click",
-          this.handleDownload.bind(this)
+          this.handleDownload.bind(this),
         );
       },
 
@@ -434,13 +446,13 @@
         elements.startButton.classList.remove(
           "hover:scale-105",
           "hover:from-yellow-400",
-          "hover:to-yellow-500"
+          "hover:to-yellow-500",
         );
         elements.startButton.classList.add(
           "bg-gradient-to-r",
           "from-green-500",
           "to-green-600",
-          "border-green-400"
+          "border-green-400",
         );
       },
     };
@@ -471,13 +483,13 @@
 
         if (!isEligibleAds) {
           console.log(
-            "No ad params OR not mobile. Loading will proceed without ads."
+            "No ad params OR not mobile. Loading will proceed without ads.",
           );
         }
 
         // ─── Global loading preparations ────────────────────────────────────────
-        window.scrollTo(0, 0); // kunci scroll
-        elements.body.style.overflow = "hidden";
+        window.scrollTo(0, 0);
+        // Note: scroll lock removed for eligible users
 
         // ─── Init modules ────────────────────────────────────────────────────────
         navigationManager.init();

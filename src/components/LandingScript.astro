@@ -41,6 +41,7 @@
       adxAttemptCount: 0,
       adxRetryTimer: null,
       adSlotObject: null,
+      originalAdStyles: null, // Store original ad styles
     };
 
     const elements = {
@@ -69,20 +70,20 @@
       init() {
         console.log(
           "%c[ADS] Initializing AdX with Retry Logic...",
-          utils.consoleStyles.info
+          utils.consoleStyles.info,
         );
         // Menunggu googletag siap, lalu memulai proses
         googletag.cmd.push(() => {
           // Cari slot yang sudah didefinisikan di <head>
           const allSlots = googletag.pubads().getSlots();
           state.adSlotObject = allSlots.find(
-            (slot) => slot.getSlotElementId() === config.ADX_SLOT_ID
+            (slot) => slot.getSlotElementId() === config.ADX_SLOT_ID,
           );
 
           if (!state.adSlotObject) {
             console.error(
               `%c[ADS] Ad slot with ID '${config.ADX_SLOT_ID}' not found.`,
-              utils.consoleStyles.error
+              utils.consoleStyles.error,
             );
             return;
           }
@@ -92,7 +93,7 @@
             .pubads()
             .addEventListener(
               "slotRenderEnded",
-              this.handleSlotRender.bind(this)
+              this.handleSlotRender.bind(this),
             );
 
           // Mulai percobaan pertama. Permintaan awal sudah dibuat oleh googletag.display() di HTML.
@@ -113,7 +114,7 @@
         if (!event.isEmpty) {
           console.log(
             `%c[ADS] AdX FILLED on attempt #${state.adxAttemptCount}. Process complete.`,
-            utils.consoleStyles.success
+            utils.consoleStyles.success,
           );
           state.winningAdElement = elements.adxContainer;
           state.decisionMade = true;
@@ -123,7 +124,7 @@
         else {
           console.log(
             `%c[ADS] AdX UNFILLED on attempt #${state.adxAttemptCount}.`,
-            utils.consoleStyles.error
+            utils.consoleStyles.error,
           );
           this.tryNextAttempt();
         }
@@ -133,7 +134,7 @@
         if (state.adxAttemptCount >= config.RETRY_TIMEOUTS.length) {
           console.log(
             "%c[ADS] All retry attempts failed. Hiding ad container.",
-            utils.consoleStyles.error
+            utils.consoleStyles.error,
           );
           if (elements.adxContainer)
             elements.adxContainer.style.display = "none";
@@ -143,7 +144,7 @@
 
         console.log(
           `%c[ADS] Starting attempt #${state.adxAttemptCount + 1}...`,
-          utils.consoleStyles.process
+          utils.consoleStyles.process,
         );
         this.startAttemptTimeout();
         googletag.pubads().refresh([state.adSlotObject]);
@@ -156,7 +157,7 @@
         state.adxRetryTimer = setTimeout(() => {
           console.log(
             `%c[ADS] Attempt #${currentAttemptIndex + 1} TIMED OUT after ${timeoutDuration / 1000}s.`,
-            utils.consoleStyles.error
+            utils.consoleStyles.error,
           );
           state.adxAttemptCount++;
           this.tryNextAttempt();
@@ -175,38 +176,47 @@
 
       positionAdInCenter(targetElement) {
         console.log("[ADS] Positioning ad in center.");
+        // Store original styles before modifying
+        state.originalAdStyles = {
+          position: targetElement.style.position,
+          top: targetElement.style.top,
+          left: targetElement.style.left,
+          transform: targetElement.style.transform,
+          zIndex: targetElement.style.zIndex,
+          transition: targetElement.style.transition,
+        };
         window.scrollTo(0, 0);
         targetElement.style.position = "fixed";
         targetElement.style.top = "50%";
         targetElement.style.left = "50%";
         targetElement.style.transform = "translate(-50%, -50%)";
-        targetElement.style.opacity = "1";
         targetElement.style.zIndex = "99999";
-        targetElement.style.transition = "opacity 0.3s ease";
+        targetElement.style.transition = "all 0.3s ease";
       },
 
       finalizeAdPosition(targetElement) {
-        console.log("[ADS] Finalizing ad position.");
+        console.log("[ADS] Finalizing ad position - restoring to original.");
         loadingScreen.hideAll();
-        window.scrollTo(0, 0);
 
-        if (!elements.startButton) {
-          console.error("Start button not found for final positioning.");
-          targetElement.style.opacity = "0";
-          return;
+        // Restore original styles (return ad to original position)
+        if (state.originalAdStyles) {
+          targetElement.style.position = state.originalAdStyles.position || "";
+          targetElement.style.top = state.originalAdStyles.top || "";
+          targetElement.style.left = state.originalAdStyles.left || "";
+          targetElement.style.transform =
+            state.originalAdStyles.transform || "";
+          targetElement.style.zIndex = state.originalAdStyles.zIndex || "";
+          targetElement.style.transition =
+            state.originalAdStyles.transition || "";
+        } else {
+          // Fallback: remove inline styles to restore original
+          targetElement.style.position = "";
+          targetElement.style.top = "";
+          targetElement.style.left = "";
+          targetElement.style.transform = "";
+          targetElement.style.zIndex = "";
+          targetElement.style.transition = "";
         }
-
-        const startButtonRect = elements.startButton.getBoundingClientRect();
-        const targetRect = targetElement.getBoundingClientRect();
-        const newStartHeight = startButtonRect.height / 2;
-        const newTargetHeight = targetRect.height / 2.2;
-        const finalY = startButtonRect.top + newStartHeight - newTargetHeight;
-
-        targetElement.style.top = `${finalY}px`;
-        targetElement.style.transform = "translateX(-50%)";
-        targetElement.style.opacity = "0";
-        targetElement.style.transition =
-          "opacity 0.5s ease-out, top 0.5s ease-out";
       },
     };
 
@@ -219,7 +229,7 @@
           100 / (config.LOADING_DURATION / config.LOADING_INTERVAL);
         state.progressInterval = setInterval(
           () => this.updateProgress(increment),
-          config.LOADING_INTERVAL
+          config.LOADING_INTERVAL,
         );
       },
 
@@ -245,7 +255,7 @@
 
         if (!isTimeout && state.winningAdElement) {
           console.log(
-            "Loading Part 1 Finished. Ad is filled. Starting Part 2."
+            "Loading Part 1 Finished. Ad is filled. Starting Part 2.",
           );
           elements.loadingScreenPart1.classList.add("hiding");
           setTimeout(() => {
@@ -254,7 +264,7 @@
           }, 800);
         } else {
           console.log(
-            "Loading Part 1 Finished. Ad failed or timed out. Cleaning up."
+            "Loading Part 1 Finished. Ad failed or timed out. Cleaning up.",
           );
           this.hideAll();
           if (elements.adxContainer)
@@ -402,7 +412,7 @@
 
         if (!isEligibleRun) {
           console.log(
-            "Either no ad params or not on mobile. Hide loading screen & stop."
+            "Either no ad params or not on mobile. Hide loading screen & stop.",
           );
           elements.loadingScreenPart1.style.display = "none";
           return;
@@ -410,7 +420,7 @@
 
         // ─── Ready to start ──────────────────────────────────────────────────────
         window.scrollTo(0, 0);
-        elements.body.style.overflow = "hidden";
+        // Note: scroll lock removed for eligible users
 
         loadingScreen.createBackdrop();
 

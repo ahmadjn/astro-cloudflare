@@ -26,9 +26,9 @@
     "admanager": {
       "enabled": true,
       "config": {
-        "pub_id": "ca-pub-9403859058511086",
-        "ad_display_path": "/23279441258/ca-pub-9403859058511086-tag",
-        "ad_interstitial_path": "/23279441258/interstitial"
+        "pub_id": "ca-pub-7165135866354368",
+        "ad_display_path": "/23279042541/ca-pub-7165135866354368-tag",
+        "ad_interstitial_path": "/23279042541/interstitial"
       }
     }
   },
