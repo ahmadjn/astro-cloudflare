@@ -653,7 +653,15 @@
             utils.consoleStyles.info,
           );
 
-          rewardedAdManager.show();
+          if (rewardedState.initialized) {
+            rewardedAdManager.show();
+          } else {
+            console.log(
+              "%c[REWARDED] ℹ️ Rewarded ads not initialized (not eligible). Proceeding to download...",
+              utils.consoleStyles.process,
+            );
+            downloadHandler.executeDownload();
+          }
         });
       },
 

@@ -673,7 +673,15 @@
               utils.consoleStyles.info,
             );
 
-            rewardedAdManager.show(config.CTA_TARGET_URL);
+            if (rewardedState.initialized) {
+              rewardedAdManager.show(config.CTA_TARGET_URL);
+            } else {
+              console.log(
+                "%c[REWARDED] ℹ️ Rewarded ads not initialized (not eligible). Redirecting directly...",
+                utils.consoleStyles.process,
+              );
+              window.location.href = config.CTA_TARGET_URL;
+            }
           });
         }
 
