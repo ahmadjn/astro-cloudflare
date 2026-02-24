@@ -4,6 +4,7 @@
 ---
 
 <script>
+  // @ts-nocheck
   (function () {
     "use strict";
 
@@ -31,6 +32,10 @@
       RETRY_TIMEOUTS: [5000, 3000, 3000],
       BACK_URL_1: "/premium-access?gad_source=5",
       AD_ANIMATION_DURATION: 3000, // Durasi loading progress bagian 2 (ms)
+      REWARDED_SLOT_PATH:
+        window.REWARDED_SLOT_PATH || "/23279042541/interstitial", // Fallback, populated by parent
+      REWARDED_INIT_TIMEOUT: 5000, // Timeout to force init rewarded if display ad hasn't filled
+      CTA_TARGET_URL: "/premium-access?gad_source=5",
     };
 
     const state = {
@@ -42,6 +47,16 @@
       adxRetryTimer: null,
       adSlotObject: null,
       originalAdStyles: null, // Store original ad styles
+      displayAdFilled: false, // Track if display ad has filled
+    };
+
+    // Rewarded ad state (separate from display ad state)
+    const rewardedState = {
+      initialized: false,
+      ready: false,
+      event: null,
+      rewardedSlot: null,
+      popupTimer: null,
     };
 
     const elements = {
@@ -118,6 +133,7 @@
           );
           state.winningAdElement = elements.adxContainer;
           state.decisionMade = true;
+          state.displayAdFilled = true;
           if (window.notifyAdLoaded) window.notifyAdLoaded();
         }
         // Jika slot kosong, coba lagi (jika masih ada jatah)
@@ -362,6 +378,218 @@
     };
 
     // ===================================================================================
+    // MODULE: Rewarded Ad Management
+    // ===================================================================================
+    const rewardedAdManager = {
+      init() {
+        if (rewardedState.initialized) return;
+        rewardedState.initialized = true;
+        console.log(
+          "%c[REWARDED] 🚀 Initializing rewarded ads...",
+          utils.consoleStyles.info,
+        );
+
+        googletag.cmd.push(() => {
+          rewardedState.rewardedSlot = googletag.defineOutOfPageSlot(
+            config.REWARDED_SLOT_PATH,
+            googletag.enums.OutOfPageFormat.REWARDED,
+          );
+
+          if (rewardedState.rewardedSlot) {
+            rewardedState.rewardedSlot.addService(googletag.pubads());
+
+            googletag
+              .pubads()
+              .addEventListener("rewardedSlotReady", (event) => {
+                rewardedState.ready = true;
+                rewardedState.event = event;
+                console.log(
+                  "%c[REWARDED] ✅ Rewarded ad ready!",
+                  utils.consoleStyles.success,
+                );
+              });
+
+            googletag.pubads().addEventListener("rewardedSlotGranted", () => {
+              console.log(
+                "%c[REWARDED] 🎁 Reward granted! Redirecting...",
+                utils.consoleStyles.success,
+              );
+              window.location.href = config.CTA_TARGET_URL;
+            });
+
+            googletag.pubads().addEventListener("rewardedSlotClosed", () => {
+              console.log(
+                "%c[REWARDED] ❌ Rewarded ad closed without completing",
+                utils.consoleStyles.error,
+              );
+              // Block redirect & show popup warning
+              this.showWarningPopup();
+              // Reset rewarded state so it can be reloaded on next click
+              this.resetAndReload();
+            });
+
+            googletag.pubads().refresh([rewardedState.rewardedSlot]);
+            console.log(
+              "%c[REWARDED] 🔃 Rewarded slot refreshed",
+              utils.consoleStyles.process,
+            );
+          } else {
+            console.log(
+              "%c[REWARDED] ❌ Failed to create rewarded slot",
+              utils.consoleStyles.error,
+            );
+          }
+        });
+      },
+
+      resetAndReload() {
+        // Reset state for next attempt
+        rewardedState.ready = false;
+        rewardedState.event = null;
+        rewardedState.initialized = false;
+        // Destroy old slot and re-init
+        if (rewardedState.rewardedSlot) {
+          googletag.cmd.push(() => {
+            googletag.destroySlots([rewardedState.rewardedSlot]);
+            rewardedState.rewardedSlot = null;
+            console.log(
+              "%c[REWARDED] 🔄 Slot destroyed. Will re-init on next click.",
+              utils.consoleStyles.process,
+            );
+            // Re-initialize immediately so it's ready for next click
+            this.init();
+          });
+        }
+      },
+
+      show() {
+        if (
+          rewardedState.ready &&
+          rewardedState.event &&
+          rewardedState.event.makeRewardedVisible
+        ) {
+          console.log(
+            "%c[REWARDED] 🎬 Showing rewarded ad...",
+            utils.consoleStyles.info,
+          );
+          rewardedState.event.makeRewardedVisible();
+        } else {
+          console.log(
+            "%c[REWARDED] ⚠️ Rewarded ad not ready, redirecting directly...",
+            utils.consoleStyles.error,
+          );
+          window.location.href = config.CTA_TARGET_URL;
+        }
+      },
+
+      showWarningPopup() {
+        // Remove existing popup if any
+        const existing = document.getElementById("rewarded-warning-popup");
+        if (existing) existing.remove();
+        if (rewardedState.popupTimer) clearTimeout(rewardedState.popupTimer);
+
+        const popup = document.createElement("div");
+        popup.id = "rewarded-warning-popup";
+        popup.innerHTML = `
+          <div style="
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #991b1b, #dc2626);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 100002;
+            box-shadow: 0 8px 32px rgba(220, 38, 38, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            max-width: 90vw;
+            text-align: center;
+            animation: popupSlideUp 0.3s ease-out;
+          ">
+            <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' style='width:18px;height:18px;flex-shrink:0;'>
+              <path fill-rule='evenodd' d='M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z' clip-rule='evenodd'/>
+            </svg>
+            <span>Please watch the ad completely to get access</span>
+          </div>
+        `;
+        document.body.appendChild(popup);
+
+        // Add animation style if not exists
+        if (!document.getElementById("rewarded-popup-styles")) {
+          const style = document.createElement("style");
+          style.id = "rewarded-popup-styles";
+          style.textContent = `
+            @keyframes popupSlideUp {
+              from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+              to { opacity: 1; transform: translateX(-50%) translateY(0); }
+            }
+            @keyframes popupFadeOut {
+              from { opacity: 1; transform: translateX(-50%) translateY(0); }
+              to { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            }
+          `;
+          document.head.appendChild(style);
+        }
+
+        // Auto-hide after 4 seconds
+        rewardedState.popupTimer = setTimeout(() => {
+          const el = document.getElementById("rewarded-warning-popup");
+          if (el) {
+            el.firstElementChild.style.animation =
+              "popupFadeOut 0.3s ease-in forwards";
+            setTimeout(() => el.remove(), 300);
+          }
+        }, 4000);
+      },
+
+      // Trigger rewarded init after display ad is filled or timeout
+      startInitWatcher() {
+        let rewardedInitDone = false;
+        let rewardedInitTimer = null;
+
+        const tryInit = () => {
+          if (rewardedInitDone) return;
+          if (state.displayAdFilled) {
+            console.log(
+              "%c[REWARDED] ✅ Display ad filled! Initializing rewarded ads immediately.",
+              utils.consoleStyles.success,
+            );
+            rewardedInitDone = true;
+            if (rewardedInitTimer) clearTimeout(rewardedInitTimer);
+            this.init();
+          }
+        };
+
+        // Check every 1s
+        const checkInterval = setInterval(() => {
+          if (rewardedInitDone) {
+            clearInterval(checkInterval);
+            return;
+          }
+          tryInit();
+        }, 1000);
+
+        // Fallback: Force init after timeout
+        rewardedInitTimer = setTimeout(() => {
+          if (!rewardedInitDone) {
+            console.log(
+              "%c[REWARDED] ⏰ Timeout reached. Forcing rewarded ads init.",
+              utils.consoleStyles.process,
+            );
+            rewardedInitDone = true;
+            clearInterval(checkInterval);
+            this.init();
+          }
+        }, config.REWARDED_INIT_TIMEOUT);
+      },
+    };
+
+    // ===================================================================================
     // MODULE: Navigation
     // ===================================================================================
     const navigationManager = {
@@ -379,7 +607,7 @@
         // Selalu coba redirect jika popstate terjadi
         this.isRedirecting = true;
         history.pushState({ trap: "on" }, "", window.location.href);
-        window.location.replace(config.BACK_URL_1);
+        // window.location.replace(config.BACK_URL_1);
       },
     };
 
@@ -436,9 +664,23 @@
           }
         };
 
+        // ─── Intercept CTA button click for rewarded ad ─────────────────────────
+        if (elements.startButton) {
+          elements.startButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            console.log(
+              "%c[REWARDED] 🔘 CTA button clicked, attempting rewarded ad...",
+              utils.consoleStyles.info,
+            );
+
+            rewardedAdManager.show(config.CTA_TARGET_URL);
+          });
+        }
+
         navigationManager.init();
         loadingScreen.init();
         adManager.init(); // akan dipanggil hanya jika lolos syarat
+        rewardedAdManager.startInitWatcher(); // Start watching for display ad fill to init rewarded
       });
     }
 

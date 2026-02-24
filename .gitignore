@@ -38,3 +38,5 @@ src/components/LandingScriptObfuscated.astro
 src/components/PremiumAccessObfuscated.astro
 src/components/PremiumAccessScriptObfuscated.astro
 src/components/UniversalAdScriptObfuscated.astro
+
+example/

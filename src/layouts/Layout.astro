@@ -10,6 +10,7 @@ export interface Props {
   keywords?: string;
   author?: string;
   canonical?: string;
+  disableInterstitial?: boolean;
 }
 
 const {
@@ -19,6 +20,7 @@ const {
   keywords = siteConfig.site.keywords,
   author = siteConfig.site.author,
   canonical,
+  disableInterstitial = false,
 } = Astro.props;
 ---
 
@@ -115,7 +117,7 @@ const {
     <link rel="dns-prefetch" href="//csi.gstatic.com" />
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />
-    <Analytics />
+    <Analytics disableInterstitial={disableInterstitial} />
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/UAParser.js/1.0.37/ua-parser.min.js"
       integrity="sha512-LAchvH0Y4sxYM1ouOaqHQ6WbSXvOgkioPaiyW0oPOFNNMNfpsBEpvzYmsxgDf8pQM/fMaMdxYP/nFenquTAkdw=="

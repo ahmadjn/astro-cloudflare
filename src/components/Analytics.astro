@@ -1,5 +1,9 @@
 ---
+export interface Props {
+  disableInterstitial?: boolean;
+}
 import siteConfig from "../../site.json";
+const { disableInterstitial = false } = Astro.props;
 ---
 
 <!-- Google Tag (gtag.js) -->{
@@ -48,15 +52,20 @@ import siteConfig from "../../site.json";
     // Define Ad Manager paths
     const adInterstitialPath = '${siteConfig.analytics.admanager.config.ad_interstitial_path}';
     const adDisplayPath = '${siteConfig.analytics.admanager.config.ad_display_path}';
+    window.REWARDED_SLOT_PATH = adInterstitialPath; // Inject globally for rewarded ads
 
     window.googletag = window.googletag || { cmd: [] };
     let interstitialSlot;
+    const disableInterstitial = ${disableInterstitial};
+
     googletag.cmd.push(() => {
       // === Konfigurasi Interstisial ===
-      interstitialSlot = googletag.defineOutOfPageSlot(
-        adInterstitialPath,
-        googletag.enums.OutOfPageFormat.INTERSTITIAL
-      );
+      if (!disableInterstitial) {
+        interstitialSlot = googletag.defineOutOfPageSlot(
+          adInterstitialPath,
+          googletag.enums.OutOfPageFormat.INTERSTITIAL
+        );
+      }
 
       if (interstitialSlot) {
         interstitialSlot.addService(googletag.pubads()).setConfig({
